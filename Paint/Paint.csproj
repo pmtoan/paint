@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="images\copy.png" />
+    <None Remove="images\cut.png" />
+    <None Remove="images\ellipse.png" />
+    <None Remove="images\eraser.png" />
+    <None Remove="images\fill.png" />
+    <None Remove="images\Line-size.png" />
+    <None Remove="images\Line.png" />
+    <None Remove="images\paste.png" />
+    <None Remove="images\pencil.png" />
+    <None Remove="images\rectangle.png" />
+    <None Remove="images\text.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IContract\IContract.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="images\copy.png" />
+    <Resource Include="images\cut.png" />
+    <Resource Include="images\Line.png" />
+    <Resource Include="images\Ellipse.png" />
+    <Resource Include="images\eraser.png" />
+    <Resource Include="images\fill.png" />
+    <Resource Include="images\line-size.png" />
+    <Resource Include="images\paste.png" />
+    <Resource Include="images\pencil.png" />
+    <Resource Include="images\Rectangle.png" />
+    <Resource Include="images\text.png" />
+  </ItemGroup>
+
+</Project>
