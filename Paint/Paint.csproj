@@ -18,7 +18,9 @@
     <None Remove="images\paste.png" />
     <None Remove="images\pencil.png" />
     <None Remove="images\rectangle.png" />
+    <None Remove="images\redo.png" />
     <None Remove="images\text.png" />
+    <None Remove="images\undo.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,7 +38,9 @@
     <Resource Include="images\paste.png" />
     <Resource Include="images\pencil.png" />
     <Resource Include="images\Rectangle.png" />
+    <Resource Include="images\redo.png" />
     <Resource Include="images\text.png" />
+    <Resource Include="images\undo.png" />
   </ItemGroup>
 
 </Project>
