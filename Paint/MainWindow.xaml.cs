@@ -1,4 +1,5 @@
 ﻿using IContract;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -27,6 +29,7 @@ namespace Paint
     {
         // State
         bool _isDrawing = false;
+        bool _drawShape = false;
         string _currentType = "";
         IShapeEntity _preview = null;
         Point _start;
@@ -113,15 +116,17 @@ namespace Paint
 
         private void border_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            _isDrawing = true;
-            _start = e.GetPosition(canvas);
+            if (_drawShape){
+                _isDrawing = true;
+                _start = e.GetPosition(canvas);
 
-            _preview.HandleStart(_start);
+                _preview.HandleStart(_start);
+            }
         }
 
         private void border_MouseMove(object sender, MouseEventArgs e)
         {
-            if (_isDrawing)
+            if (_isDrawing && _drawShape)
             {
                 var end = e.GetPosition(canvas);
                 _preview.HandleEnd(end);
@@ -146,13 +151,16 @@ namespace Paint
 
         private void border_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            _isDrawing = false;
+            if (_drawShape)
+            {
+                _isDrawing = false;
 
-            var end = e.GetPosition(canvas); // Điểm kết thúc
+                var end = e.GetPosition(canvas); // Điểm kết thúc
 
-            _preview.HandleEnd(end);
+                _preview.HandleEnd(end);
 
-            _drawnShapes.Add(_preview.Clone() as IShapeEntity);
+                _drawnShapes.Add(_preview.Clone() as IShapeEntity);
+            }
         }
 
         private void chooseShapeBtnClick(object sender, RoutedEventArgs e)
@@ -161,9 +169,60 @@ namespace Paint
             var entity = button!.Tag as IShapeEntity;
 
             Debug.WriteLine(entity!.Name);
-
+            if (_currentType == entity!.Name || _currentType == "")
+            {
+                _drawShape = !_drawShape;
+            }
             _currentType = entity!.Name;
             _preview = (_shapesPrototypes[entity.Name].Clone() as IShapeEntity)!;
+        }
+
+        private void saveButton_Click(object sender, RoutedEventArgs e)
+        {
+            FileStream fs = new FileStream("shape.dat", FileMode.Create, FileAccess.Write);
+            BinaryWriter br = new BinaryWriter(fs);
+            foreach (var item in _drawnShapes)
+            {
+                IPaintBusiness painter = _painterPrototypes[item.Name];
+                br.Write(item.Name);
+                br.Write(painter.PositionX1(item));
+                br.Write(painter.PositionY1(item));
+                br.Write(painter.PositionX2(item));
+                br.Write(painter.PositionY2(item));
+            }
+            br.Close();
+        }
+
+        private void openButton_Click(object sender, RoutedEventArgs e)
+        {
+            FileStream fs = new FileStream("shape.dat", FileMode.Open, FileAccess.Read);
+            BinaryReader br = new BinaryReader(fs);
+            _drawnShapes.Clear();
+            while (br.BaseStream.Position < br.BaseStream.Length)
+            {
+                Point p1, p2;
+                string name = br.ReadString();
+                p1.X = br.ReadDouble();
+                p1.Y = br.ReadDouble();
+                p2.X = br.ReadDouble();
+                p2.Y = br.ReadDouble();
+                IShapeEntity shape = null;
+                shape = (_shapesPrototypes[name].Clone() as IShapeEntity)!;
+                shape.HandleStart(p1);
+                shape.HandleEnd(p2);
+                _drawnShapes.Add(shape);
+            }
+            canvas.Children.Clear(); // Xóa đi toàn bộ
+
+            // Vẽ lại những hình đã vẽ trước đó
+            foreach (var item in _drawnShapes)
+            {
+                IPaintBusiness painter = _painterPrototypes[item.Name];
+                UIElement shape = painter.Draw(item);
+
+                canvas.Children.Add(shape);
+            }
+            br.Close();
         }
     }
 }

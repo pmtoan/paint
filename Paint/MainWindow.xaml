@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ribbon="clr-namespace:System.Windows.Controls.Ribbon;assembly=System.Windows.Controls.Ribbon" 
         xmlns:local="clr-namespace:Paint"
+        xmlns:ab2d="clr-namespace:Ab2d.Controls;assembly=Ab2d.Controls.ZoomPanel"
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="1000" Loaded="Window_Loaded">
     <DockPanel LastChildFill="True">
@@ -21,7 +22,10 @@
                     <RibbonButton Margin="5" Label="Cut" SmallImageSource="./images/cut.png"/>
                     <RibbonButton Margin="5" Label="Copy" SmallImageSource="./images/copy.png"/>
                 </RibbonGroup>
-
+                <RibbonGroup Header="File">
+                    <RibbonButton Name="saveButton" Click="saveButton_Click" Margin="5" Label="Save"  LargeImageSource="./images/save.png"/>
+                    <RibbonButton Name="openButton" Click="openButton_Click" Margin="5" Label="Open"  LargeImageSource="./images/folder.png"/>
+                </RibbonGroup>
                 <RibbonGroup Header="Tool">
                     <StackPanel Orientation="Horizontal">
                         <RibbonButton Margin="5" SmallImageSource="./images/pencil.png"/>
@@ -51,7 +55,7 @@
                         </RibbonControlGroup>
                     </WrapPanel>
                 </RibbonGroup>
-                
+
                 <RibbonGroup x:Name="Size" Header="Size">
                     <RibbonMenuButton Label="Size" LargeImageSource="./images/line-size.png">
                         <RibbonGallery>
@@ -92,11 +96,7 @@
                             </RibbonGalleryCategory>
                         </RibbonGallery>
                     </RibbonMenuButton>
-
-
-
                 </RibbonGroup>
-                
             </RibbonTab>
         </Ribbon>
 

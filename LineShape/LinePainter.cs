@@ -28,5 +28,25 @@ namespace LineShape
 
             return element;
         }
+        public double PositionX1(IShapeEntity shape)
+        {
+            var line = shape as LineEntity;
+            return line.Start.X;
+        }
+        public double PositionY1(IShapeEntity shape)
+        {
+            var line = shape as LineEntity;
+            return line.Start.Y;
+        }
+        public double PositionX2(IShapeEntity shape)
+        {
+            var line = shape as LineEntity;
+            return line.End.X;
+        }
+        public double PositionY2(IShapeEntity shape)
+        {
+            var line = shape as LineEntity;
+            return line.End.Y;
+        }
     }
 }
