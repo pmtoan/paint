@@ -34,6 +34,7 @@ namespace Paint
         IShapeEntity _preview = null;
         Point _start;
         List<IShapeEntity> _drawnShapes = new List<IShapeEntity>();
+        List<IShapeEntity> _stackUndoShape = new List<IShapeEntity>();
 
         // Cấu hình
         Dictionary<string, IPaintBusiness> _painterPrototypes = new Dictionary<string, IPaintBusiness>();
@@ -231,6 +232,43 @@ namespace Paint
         private void importButton_Click(object sender, RoutedEventArgs e)
         {
 
+        private void undoButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_drawnShapes.Count >= 1)
+            {
+                _stackUndoShape.Add(_drawnShapes[_drawnShapes.Count - 1]);
+                _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
+
+                canvas.Children.Clear();
+
+                foreach (var item in _drawnShapes)
+                {
+                    IPaintBusiness painter = _painterPrototypes[item.Name];
+                    UIElement shape = painter.Draw(item);
+
+                    canvas.Children.Add(shape);
+                }
+            }
+
+        }
+
+        private void redoButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_stackUndoShape.Count >= 1)
+            {
+                _drawnShapes.Add(_stackUndoShape[_stackUndoShape.Count - 1]);
+                _stackUndoShape.RemoveAt(_stackUndoShape.Count - 1);
+
+                canvas.Children.Clear();
+
+                foreach (var item in _drawnShapes)
+                {
+                    IPaintBusiness painter = _painterPrototypes[item.Name];
+                    UIElement shape = painter.Draw(item);
+
+                    canvas.Children.Add(shape);
+                }
+            }
         }
     }
 }

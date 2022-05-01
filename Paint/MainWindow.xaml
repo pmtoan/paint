@@ -36,6 +36,8 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <RibbonButton Margin="5" SmallImageSource="./images/eraser.png"/>
+                        <RibbonButton Name="undoButton" Click="undoButton_Click" Margin="5" SmallImageSource="./images/undo.png"/>
+                        <RibbonButton Name="redoButton" Click="redoButton_Click" Margin="5" SmallImageSource="./images/redo.png"/>
                     </StackPanel>
                 </RibbonGroup>
 
