@@ -224,5 +224,13 @@ namespace Paint
             }
             br.Close();
         }
+        private void exportButton_Click(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void importButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

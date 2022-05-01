@@ -23,8 +23,10 @@
                     <RibbonButton Margin="5" Label="Copy" SmallImageSource="./images/copy.png"/>
                 </RibbonGroup>
                 <RibbonGroup Header="File">
-                    <RibbonButton Name="saveButton" Click="saveButton_Click" Margin="5" Label="Save"  LargeImageSource="./images/save.png"/>
-                    <RibbonButton Name="openButton" Click="openButton_Click" Margin="5" Label="Open"  LargeImageSource="./images/folder.png"/>
+                    <RibbonButton Name="saveButton" Click="saveButton_Click" Margin="5" Label="Save"  SmallImageSource="./images/save.png"/>
+                    <RibbonButton Name="openButton" Click="openButton_Click" Margin="5" Label="Open"  SmallImageSource="./images/folder.png"/>
+                    <RibbonButton Name="exportButton" Click="exportButton_Click" Margin="5" Label="Export"  SmallImageSource="./images/picture.png"/>
+                    <RibbonButton Name="importButton" Click="importButton_Click" Margin="5" Label="Import"  SmallImageSource="./images/import.png"/>
                 </RibbonGroup>
                 <RibbonGroup Header="Tool">
                     <StackPanel Orientation="Horizontal">
