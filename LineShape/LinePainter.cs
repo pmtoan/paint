@@ -22,8 +22,9 @@ namespace LineShape
                 Y1 = line.Start.Y,
                 X2 = line.End.X,
                 Y2 = line.End.Y,
-                StrokeThickness = 1,
-                Stroke = new SolidColorBrush(Colors.Black)
+                StrokeThickness = line.Size,
+                Stroke = new SolidColorBrush(line.ColorApply),
+                StrokeDashArray = line.StrokeType
             };
 
             return element;

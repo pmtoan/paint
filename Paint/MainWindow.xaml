@@ -1,115 +1,181 @@
-﻿<Window x:Class="Paint.MainWindow"
+﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ribbon="clr-namespace:System.Windows.Controls.Ribbon;assembly=System.Windows.Controls.Ribbon" 
         xmlns:local="clr-namespace:Paint"
-        xmlns:ab2d="clr-namespace:Ab2d.Controls;assembly=Ab2d.Controls.ZoomPanel"
+        xmlns:syncfusion=" http://schemas.syncfusion.com/wpf" x:Class="Paint.MainWindow"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="1000" Loaded="Window_Loaded">
     <DockPanel LastChildFill="True">
-        <Ribbon DockPanel.Dock="Top">
-            <Ribbon.ApplicationMenu>
-                <RibbonApplicationMenu>
-                    <RibbonApplicationMenuItem Name="item1" Header="Lorem"/>
-                </RibbonApplicationMenu>
-            </Ribbon.ApplicationMenu>
+        <ribbon:Ribbon DockPanel.Dock="Top">
+            <ribbon:Ribbon.ApplicationMenu>
+                <ribbon:RibbonApplicationMenu>
+                    <ribbon:RibbonApplicationMenuItem x:Name="item1" Header="Lorem"/>
+                </ribbon:RibbonApplicationMenu>
+            </ribbon:Ribbon.ApplicationMenu>
 
-            <RibbonTab Header="Home">
-                <RibbonGroup Header="Clipboard">
-                    <RibbonButton Margin="5" Label="Paste"  LargeImageSource="./images/paste.png"/>
-                    <RibbonButton Margin="5" Label="Cut" SmallImageSource="./images/cut.png"/>
-                    <RibbonButton Margin="5" Label="Copy" SmallImageSource="./images/copy.png"/>
-                </RibbonGroup>
-                <RibbonGroup Header="File">
-                    <RibbonButton Name="saveButton" Click="saveButton_Click" Margin="5" Label="Save"  SmallImageSource="./images/save.png"/>
-                    <RibbonButton Name="openButton" Click="openButton_Click" Margin="5" Label="Open"  SmallImageSource="./images/folder.png"/>
-                    <RibbonButton Name="exportButton" Click="exportButton_Click" Margin="5" Label="Export"  SmallImageSource="./images/picture.png"/>
-                    <RibbonButton Name="importButton" Click="importButton_Click" Margin="5" Label="Import"  SmallImageSource="./images/import.png"/>
-                </RibbonGroup>
-                <RibbonGroup Header="Tool">
+            <ribbon:RibbonTab Header="Home">
+                <ribbon:RibbonGroup Header="Clipboard">
+                    <ribbon:RibbonButton Margin="5" Label="Paste"  LargeImageSource="./images/paste.png"/>
+                    <ribbon:RibbonButton Margin="5" Label="Cut" SmallImageSource="./images/cut.png"/>
+                    <ribbon:RibbonButton Margin="5" Label="Copy" SmallImageSource="./images/copy.png"/>
+                </ribbon:RibbonGroup>
+                <ribbon:RibbonGroup Header="File">
+                    <ribbon:RibbonButton x:Name="saveButton" Click="saveButton_Click" Margin="5" Label="Save"  SmallImageSource="./images/save.png"/>
+                    <ribbon:RibbonButton x:Name="openButton" Click="openButton_Click" Margin="5" Label="Open"  SmallImageSource="./images/folder.png"/>
+                    <ribbon:RibbonButton x:Name="exportButton" Click="exportButton_Click" Margin="5" Label="Export"  />
+                    <ribbon:RibbonButton x:Name="importButton" Click="importButton_Click" Margin="5" Label="Import"  SmallImageSource="./images/import.png"/>
+                </ribbon:RibbonGroup>
+                <ribbon:RibbonGroup Header="Tool">
                     <StackPanel Orientation="Horizontal">
-                        <RibbonButton Margin="5" SmallImageSource="./images/pencil.png"/>
-                        <RibbonButton Margin="5" SmallImageSource="./images/fill.png"/>
-                        <RibbonButton Margin="5" SmallImageSource="./images/text.png"/>
+                        <ribbon:RibbonButton Margin="5" SmallImageSource="./images/pencil.png"/>
+                        <ribbon:RibbonButton Margin="5" SmallImageSource="./images/fill.png"/>
+                        <ribbon:RibbonButton Margin="5" SmallImageSource="./images/text.png"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <RibbonButton Margin="5" SmallImageSource="./images/eraser.png"/>
+                        <ribbon:RibbonButton Margin="5" SmallImageSource="./images/eraser.png"/>
+                        <ribbon:RibbonButton x:Name="undoButton" Click="undoButton_Click" Margin="5" SmallImageSource="./images/undo.png"/>
+                        <ribbon:RibbonButton x:Name="redoButton" Click="redoButton_Click" Margin="5" SmallImageSource="./images/redo.png"/>
                     </StackPanel>
-                </RibbonGroup>
+                </ribbon:RibbonGroup>
 
-                <RibbonGroup Header="Shape" x:Name="ShapeGroup" Width="150">
+                <ribbon:RibbonGroup Header="Shape" x:Name="ShapeGroup" Width="120">
                     <WrapPanel Width="140">
-                        <RibbonControlGroup x:Name="shapeList" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-                            <RibbonControlGroup.ItemsPanel>
+                        <ribbon:RibbonControlGroup x:Name="shapeList" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                            <ribbon:RibbonControlGroup.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <WrapPanel IsItemsHost="True" Orientation="Horizontal" />
                                 </ItemsPanelTemplate>
-                            </RibbonControlGroup.ItemsPanel>
-                            <RibbonControlGroup.ItemTemplate>
+                            </ribbon:RibbonControlGroup.ItemsPanel>
+                            <ribbon:RibbonControlGroup.ItemTemplate>
                                 <DataTemplate>
-                                    <RibbonButton SmallImageSource="{Binding PluginIconPath}"
+                                    <ribbon:RibbonButton SmallImageSource="{Binding PluginIconPath}"
                                                   Click="chooseShapeBtnClick"
                                                   Tag="{Binding PluginEntity}"  Width="25" Height="25" />
                                 </DataTemplate>
-                            </RibbonControlGroup.ItemTemplate>
-                        </RibbonControlGroup>
+                            </ribbon:RibbonControlGroup.ItemTemplate>
+                        </ribbon:RibbonControlGroup>
                     </WrapPanel>
-                </RibbonGroup>
+                </ribbon:RibbonGroup>
 
-                <RibbonGroup x:Name="Size" Header="Size">
-                    <RibbonMenuButton Label="Size" LargeImageSource="./images/line-size.png">
-                        <RibbonGallery>
-                            <RibbonGalleryCategory>
-                                <RibbonGalleryItem Height="30">
+                <ribbon:RibbonGroup x:Name="Size" Header="Size">
+                    <ribbon:RibbonMenuButton Label="Size" LargeImageSource="./images/line-size.png">
+                        <ribbon:RibbonGallery SelectionChanged="SizeGallery_SelectionChanged" >
+                            <ribbon:RibbonGalleryCategory x:Name="SizeCategory">
+                                <ribbon:RibbonGalleryItem Height="30" Tag="2">
                                     <Rectangle
                                         Width="80"
-                                        Height="1"
+                                        Height="2"
                                         Fill="Black"
                                         Stroke="Black"
                                         StrokeDashArray="1,0"
-                                        StrokeThickness="1" />
-                                </RibbonGalleryItem>
-                                <RibbonGalleryItem Height="30">
-                                    <Rectangle
-                                        Width="80"
-                                        Height="2"
-                                        Stroke="Black"
-                                        StrokeDashArray="1,0"
                                         StrokeThickness="2" />
-                                </RibbonGalleryItem>
-                                <RibbonGalleryItem Height="30">
+                                </ribbon:RibbonGalleryItem>
+                                <ribbon:RibbonGalleryItem Height="30" Tag="4">
                                     <Rectangle
                                         Width="80"
-                                        Height="2"
-                                        Stroke="Black"
-                                        StrokeDashArray="1,0"
-                                        StrokeThickness="4" />
-                                </RibbonGalleryItem>
-                                <RibbonGalleryItem Height="30">
-                                    <Rectangle
-                                        Width="84"
                                         Height="4"
                                         Stroke="Black"
                                         StrokeDashArray="1,0"
+                                        StrokeThickness="4" />
+                                </ribbon:RibbonGalleryItem>
+                                <ribbon:RibbonGalleryItem Height="30" Tag="8">
+                                    <Rectangle
+                                        Width="80"
+                                        Height="6"
+                                        Stroke="Black"
+                                        StrokeDashArray="1,0"
                                         StrokeThickness="8" />
-                                </RibbonGalleryItem>
-                            </RibbonGalleryCategory>
-                        </RibbonGallery>
-                    </RibbonMenuButton>
-                </RibbonGroup>
-            </RibbonTab>
-        </Ribbon>
+                                </ribbon:RibbonGalleryItem>
+                                <ribbon:RibbonGalleryItem Height="30" Tag="16">
+                                    <Rectangle
+                                        Width="80"
+                                        Height="10"
+                                        Stroke="Black"
+                                        StrokeDashArray="1,0"
+                                        StrokeThickness="10" />
+                                </ribbon:RibbonGalleryItem>
+                            </ribbon:RibbonGalleryCategory>
+                        </ribbon:RibbonGallery>
+                    </ribbon:RibbonMenuButton>
+                </ribbon:RibbonGroup>
+
+                <ribbon:RibbonGroup x:Name="StrokeType" Header="Type">
+                    <ribbon:RibbonMenuButton Label="Stroke" LargeImageSource="./images/line-size.png">
+                        <ribbon:RibbonGallery SelectionChanged="StrokeTypeGallery_SelectionChanged" >
+                            <ribbon:RibbonGalleryCategory x:Name="StrokeTypeCategory">
+                                <ribbon:RibbonGalleryItem Height="30" Tag="1">
+                                    <Rectangle
+                                        Width="80"
+                                        Height="2"
+                                        Stroke="Black"
+                                        StrokeDashArray="2"
+                                        StrokeThickness="2" />
+                                </ribbon:RibbonGalleryItem>
+                                <ribbon:RibbonGalleryItem Height="30" Tag="4 1 1 1 1 1">
+                                    <Rectangle
+                                        Width="80"
+                                        Height="2"
+                                        Stroke="Black"
+                                        StrokeDashArray="1 1 4"
+                                        StrokeThickness="2" />
+                                </ribbon:RibbonGalleryItem>
+                                <ribbon:RibbonGalleryItem Height="30" Tag="6">
+                                    <Rectangle
+                                        Width="80"
+                                        Height="2"
+                                        Stroke="Black"
+                                        StrokeDashArray="6"
+                                        StrokeThickness="2" />
+                                </ribbon:RibbonGalleryItem>
+                                <ribbon:RibbonGalleryItem Height="30" >
+                                    <Rectangle
+                                        Width="84"
+                                        Height="2"
+                                        Stroke="Black"
+                                        StrokeDashArray="1 1"
+                                        StrokeThickness="2" />
+                                </ribbon:RibbonGalleryItem>
+                            </ribbon:RibbonGalleryCategory>
+                        </ribbon:RibbonGallery>
+                    </ribbon:RibbonMenuButton>
+                </ribbon:RibbonGroup>
+
+                <ribbon:RibbonGroup x:Name="ColorPalette" Header="Color">
+
+                    <DockPanel LastChildFill="False">
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                            <Label Content="Stroke" FontSize="12"/>
+                            <xctk:ColorPicker Name="StrokeColor" Margin="10,0,0,0"
+                                          DisplayColorAndName="False" Height="25" Width="70"
+                                          SelectedColor="Black" ShowDropDownButton="False"
+                                          AvailableColorsSortingMode="HueSaturationBrightness"
+                                              SelectedColorChanged="StrokeColor_SelectedColorChanged"/>
+                        </StackPanel>
+                        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="0,10,0,0">
+                            <Label Content="Fill" FontSize="12"/>
+                            <xctk:ColorPicker Name="FillColor" Margin="29,0,0,0"
+                                          DisplayColorAndName="False" Height="25" Width="70"
+                                          SelectedColor="Black" ShowDropDownButton="False"
+                                          AvailableColorsSortingMode="HueSaturationBrightness"
+                                              SelectedColorChanged="FillColor_SelectedColorChanged"/>
+                        </StackPanel>
+                    </DockPanel>
+                </ribbon:RibbonGroup>
+            </ribbon:RibbonTab>
+        </ribbon:Ribbon>
 
         <DockPanel LastChildFill="True">
             <Grid>
                 <Canvas x:Name="canvas" Background="White" Focusable="False" >
+                  
                 </Canvas>
-                <Border Name="border" Background="Transparent" MouseDown="border_MouseDown" MouseMove="border_MouseMove" MouseUp="border_MouseUp">
-                </Border>
+                <Border x:Name="border" Background="Transparent" MouseDown="border_MouseDown" MouseMove="border_MouseMove" MouseUp="border_MouseUp"/>
             </Grid>
         </DockPanel>
     </DockPanel>
-    
+
 </Window>
