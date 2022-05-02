@@ -7,20 +7,16 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Ribbon;
 using System.Windows.Data;
 using System.Windows.Documents;
+
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-
 namespace Paint
 {
     /// <summary>
@@ -185,57 +181,103 @@ namespace Paint
 
         private void saveButton_Click(object sender, RoutedEventArgs e)
         {
-            FileStream fs = new FileStream("shape.dat", FileMode.Create, FileAccess.Write);
-            BinaryWriter br = new BinaryWriter(fs);
-            foreach (var item in _drawnShapes)
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            if (saveFileDialog.ShowDialog() == true)
             {
-                IPaintBusiness painter = _painterPrototypes[item.Name];
-                br.Write(item.Name);
-                br.Write(painter.PositionX1(item));
-                br.Write(painter.PositionY1(item));
-                br.Write(painter.PositionX2(item));
-                br.Write(painter.PositionY2(item));
+                FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.Create, FileAccess.Write);
+                BinaryWriter br = new BinaryWriter(fs);
+                foreach (var item in _drawnShapes)
+                {
+                    IPaintBusiness painter = _painterPrototypes[item.Name];
+                    br.Write(item.Name);
+                    br.Write(painter.PositionX1(item));
+                    br.Write(painter.PositionY1(item));
+                    br.Write(painter.PositionX2(item));
+                    br.Write(painter.PositionY2(item));
+                }
+                br.Close();
             }
-            br.Close();
         }
 
         private void openButton_Click(object sender, RoutedEventArgs e)
         {
-            FileStream fs = new FileStream("shape.dat", FileMode.Open, FileAccess.Read);
-            BinaryReader br = new BinaryReader(fs);
-            _drawnShapes.Clear();
-            while (br.BaseStream.Position < br.BaseStream.Length)
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            if (openFileDialog.ShowDialog() == true)
             {
-                Point p1, p2;
-                string name = br.ReadString();
-                p1.X = br.ReadDouble();
-                p1.Y = br.ReadDouble();
-                p2.X = br.ReadDouble();
-                p2.Y = br.ReadDouble();
-                IShapeEntity shape = null;
-                shape = (_shapesPrototypes[name].Clone() as IShapeEntity)!;
-                shape.HandleStart(p1);
-                shape.HandleEnd(p2);
-                _drawnShapes.Add(shape);
-            }
-            canvas.Children.Clear(); // Xóa đi toàn bộ
+                FileStream fs = new FileStream(openFileDialog.FileName, FileMode.Open, FileAccess.Read);
+                BinaryReader br = new BinaryReader(fs);
+                _drawnShapes.Clear();
+                while (br.BaseStream.Position < br.BaseStream.Length)
+                {
+                    Point p1, p2;
+                    string name = br.ReadString();
+                    p1.X = br.ReadDouble();
+                    p1.Y = br.ReadDouble();
+                    p2.X = br.ReadDouble();
+                    p2.Y = br.ReadDouble();
+                    IShapeEntity shape = null;
+                    shape = (_shapesPrototypes[name].Clone() as IShapeEntity)!;
+                    shape.HandleStart(p1);
+                    shape.HandleEnd(p2);
+                    _drawnShapes.Add(shape);
+                }
+                canvas.Children.Clear(); // Xóa đi toàn bộ
 
-            // Vẽ lại những hình đã vẽ trước đó
-            foreach (var item in _drawnShapes)
-            {
-                IPaintBusiness painter = _painterPrototypes[item.Name];
-                UIElement shape = painter.Draw(item);
+                // Vẽ lại những hình đã vẽ trước đó
+                foreach (var item in _drawnShapes)
+                {
+                    IPaintBusiness painter = _painterPrototypes[item.Name];
+                    UIElement shape = painter.Draw(item);
 
-                canvas.Children.Add(shape);
+                    canvas.Children.Add(shape);
+                }
+                br.Close();
             }
-            br.Close();
         }
         private void exportButton_Click(object sender, RoutedEventArgs e)
         {
-        }
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                Size size = new Size(canvas.ActualWidth, canvas.ActualHeight);
+                canvas.Measure(size);
+                canvas.Arrange(new Rect(size));
 
+                RenderTargetBitmap renderBitmap =
+                new RenderTargetBitmap(
+                   (int)size.Width,
+                   (int)size.Height,
+                   96d,
+                   96d,
+                   PixelFormats.Pbgra32);
+                renderBitmap.Render(canvas);
+
+                using (FileStream outStream = new FileStream(saveFileDialog.FileName, FileMode.Create))
+                {
+                    BmpBitmapEncoder encoder = new BmpBitmapEncoder();
+
+                    encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
+
+                    encoder.Save(outStream);
+                }
+            }
+        }
         private void importButton_Click(object sender, RoutedEventArgs e)
         {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            if (openFileDialog.ShowDialog() == true)
+            {
+                BitmapImage theImage = new BitmapImage
+                (new Uri(openFileDialog.FileName, UriKind.Relative));
+
+                ImageBrush myImageBrush = new ImageBrush(theImage);
+
+                Canvas myCanvas = new Canvas();
+                myCanvas.Width = 400;
+                myCanvas.Height = 266;
+                myCanvas.Background = myImageBrush;
+
+                canvas.Children.Add(myCanvas);
         }
 
         private void undoButton_Click(object sender, RoutedEventArgs e)
