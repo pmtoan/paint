@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Ribbon;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -30,8 +31,14 @@ namespace Paint
         // State
         bool _isDrawing = false;
         bool _drawShape = false;
+
         string _currentType = "";
+        int _currentThickness = 1;
+        Color _currentStrokeColor = Colors.Black;
+        Color _currentFillColor = Colors.Black;
+        string _currentStrokeType = null;
         IShapeEntity _preview = null;
+
         Point _start;
         List<IShapeEntity> _drawnShapes = new List<IShapeEntity>();
         List<IShapeEntity> _stackUndoShape = new List<IShapeEntity>();
@@ -95,18 +102,10 @@ namespace Paint
                 shapeItemSource.Add(new PluginItems()
                 {
                     PluginEntity = entity,
-                    PluginIconPath = "./images/"  + name + ".png",
+                    PluginIconPath = "./images/" + name + ".png",
                 });
             }
             shapeList.ItemsSource = shapeItemSource;
-
-            if (_shapesPrototypes.Count > 0)
-            {
-                //Lựa chọn nút bấm đầu tiên
-                var (key, shape) = _shapesPrototypes.ElementAt(0);
-                _currentType = key;
-                _preview = (shape.Clone() as IShapeEntity)!;
-            }
         }
 
         class PluginItems
@@ -117,7 +116,8 @@ namespace Paint
 
         private void border_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (_drawShape){
+            if (_drawShape)
+            {
                 _isDrawing = true;
                 _start = e.GetPosition(canvas);
 
@@ -167,15 +167,20 @@ namespace Paint
         private void chooseShapeBtnClick(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            var entity = button!.Tag as IShapeEntity;
-
-            Debug.WriteLine(entity!.Name);
-            if (_currentType == entity!.Name || _currentType == "")
+            var entity = button.Tag as IShapeEntity;
+            if(entity != null)
             {
-                _drawShape = !_drawShape;
+                if (_currentType != entity.Name || _currentType == "")
+                {
+                    _drawShape = true;
+                    _currentType = entity!.Name;
+
+                    _preview = (_shapesPrototypes[entity.Name].Clone() as IShapeEntity)!;
+                    _preview.HandleColor(_currentStrokeColor);
+                    _preview.HandleThickness(_currentThickness);
+                    _preview.HandleStrokeType(_currentStrokeType);
+                }
             }
-            _currentType = entity!.Name;
-            _preview = (_shapesPrototypes[entity.Name].Clone() as IShapeEntity)!;
         }
 
         private void saveButton_Click(object sender, RoutedEventArgs e)
@@ -231,6 +236,7 @@ namespace Paint
 
         private void importButton_Click(object sender, RoutedEventArgs e)
         {
+        }
 
         private void undoButton_Click(object sender, RoutedEventArgs e)
         {
@@ -267,6 +273,57 @@ namespace Paint
                     UIElement shape = painter.Draw(item);
 
                     canvas.Children.Add(shape);
+                }
+            }
+        }
+
+
+        private void SizeGallery_SelectionChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            foreach(RibbonGalleryItem item in SizeCategory.Items)
+            {
+                if (item.IsSelected)
+                {
+                    _currentThickness = Convert.ToInt32(item.Tag);
+                    if (_preview != null)
+                    {
+                        _preview.HandleThickness(_currentThickness);
+                    }
+                }
+            }
+        }
+
+        private void StrokeColor_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
+        {
+            if (StrokeColor.SelectedColor != null)
+            {
+                _currentStrokeColor = (Color)StrokeColor.SelectedColor;
+                if (_preview != null)
+                {
+                    _preview.HandleColor(_currentStrokeColor);
+                }
+            }
+        }
+
+        private void FillColor_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
+        {
+            if (FillColor.SelectedColor != null)
+            {
+                _currentFillColor = (Color)FillColor.SelectedColor;
+            }
+        }
+
+        private void StrokeTypeGallery_SelectionChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            foreach (RibbonGalleryItem item in StrokeTypeCategory.Items)
+            {
+                if (item.IsSelected)
+                {
+                    _currentStrokeType = item.Tag as string;
+                    if (_preview != null)
+                    {
+                        _preview.HandleStrokeType(_currentStrokeType);
+                    }
                 }
             }
         }

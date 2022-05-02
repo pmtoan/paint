@@ -14,10 +14,13 @@
     <None Remove="images\eraser.png" />
     <None Remove="images\fill.png" />
     <None Remove="images\folder.png" />
+    <None Remove="images\import.png" />
     <None Remove="images\Line-size.png" />
     <None Remove="images\Line.png" />
+    <None Remove="images\paint - Shortcut.lnk" />
     <None Remove="images\paste.png" />
     <None Remove="images\pencil.png" />
+    <None Remove="images\picture.png" />
     <None Remove="images\rectangle.png" />
     <None Remove="images\save.png" />
     <None Remove="images\redo.png" />
@@ -27,6 +30,8 @@
 
   <ItemGroup>
     <PackageReference Include="Ab2d.Controls.ZoomPanel" Version="6.0.8019" />
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.3.0" />
+    <PackageReference Include="Syncfusion.SfColorPalette.WPF" Version="20.1.0.51" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,21 +39,60 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="images\copy.png" />
-    <Resource Include="images\cut.png" />
-    <Resource Include="images\folder.png" />
-    <Resource Include="images\Line.png" />
-    <Resource Include="images\Ellipse.png" />
-    <Resource Include="images\eraser.png" />
-    <Resource Include="images\fill.png" />
-    <Resource Include="images\line-size.png" />
-    <Resource Include="images\paste.png" />
-    <Resource Include="images\pencil.png" />
-    <Resource Include="images\Rectangle.png" />
-    <Resource Include="images\save.png" />
-    <Resource Include="images\redo.png" />
-    <Resource Include="images\text.png" />
-    <Resource Include="images\undo.png" />
+    <Resource Include="images\copy.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\cut.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\folder.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\import.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\Line.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\Ellipse.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\eraser.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\fill.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\line-size.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\paint - Shortcut.lnk">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\paste.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\pencil.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\picture.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\Rectangle.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\save.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\redo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\text.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\undo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>

@@ -56,8 +56,9 @@ namespace RectangleShape
             {
                 Width = Math.Abs(width),
                 Height = Math.Abs(height),
-                StrokeThickness = 1,
-                Stroke = new SolidColorBrush(Colors.Red)
+                StrokeThickness = rectangle.Size,
+                Stroke = new SolidColorBrush(rectangle.ColorApply),
+                StrokeDashArray = rectangle.StrokeType
             };
             Canvas.SetLeft(element, rectangle.TopLeft.X);
             Canvas.SetTop(element, rectangle.TopLeft.Y);

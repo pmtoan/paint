@@ -49,12 +49,15 @@ namespace EllipseShape
                     new Point(ellipse.MousePoint.X, ellipse.AnchorPoint.Y);
             }
 
+         
+
             var element = new Ellipse()
             {
                 Width = Math.Abs(width),
                 Height = Math.Abs(height),
-                StrokeThickness = 1,
-                Stroke = new SolidColorBrush(Colors.Green)
+                StrokeThickness = ellipse.Size,
+                Stroke = new SolidColorBrush(ellipse.ColorApply),
+                StrokeDashArray = ellipse.StrokeType
             };
             Canvas.SetLeft(element, ellipse.TopLeft.X);
             Canvas.SetTop(element, ellipse.TopLeft.Y);
