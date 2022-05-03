@@ -28,6 +28,8 @@ namespace Paint
         bool _isDrawing = false;
         bool _drawMode = false;
         bool _finishShape = false;
+        bool _isZoomIn = false;
+        bool _isZoomOut = false;
 
         string _currentType = "";
         int _currentThickness = 1;
@@ -152,6 +154,7 @@ namespace Paint
                         br.Write(painter.PositionY2(item));
                         br.Write(painter.Thickness(item));
                         br.Write(painter.Color(item));
+                        br.Write(painter.ColorFill(item));
                         br.Write(strokeString.Trim());
                     }
                     else if(item == null)
@@ -182,7 +185,7 @@ namespace Paint
 
                     //Biến cho Shape
                     Point p1, p2;
-                    Color color;
+                    Color color, colorfill;
                     int size;
                     string name, typeStroke;
 
@@ -197,6 +200,7 @@ namespace Paint
                         p2.Y = br.ReadDouble();
                         size = br.ReadInt32();
                         color = (Color)ColorConverter.ConvertFromString(br.ReadString());
+                        colorfill = (Color)ColorConverter.ConvertFromString(br.ReadString());
                         typeStroke = br.ReadString();
 
                         IShapeEntity shape = null;
@@ -205,6 +209,7 @@ namespace Paint
                         shape.HandleEnd(p2);
                         shape.HandleThickness(size);
                         shape.HandleColor(color);
+                        shape.HandleFillColor(colorfill);
                         if (typeStroke == "null")
                         {
                             typeStroke = null;
@@ -418,6 +423,7 @@ namespace Paint
                 }
             }
         }
+
         private void eraserButton_Click(object sender, RoutedEventArgs e)
         {
             _drawMode = false;
@@ -446,7 +452,8 @@ namespace Paint
                 }
             }
         }
-        private void Border_MouseDown(object sender, MouseButtonEventArgs e)
+
+        private void border_MouseDown(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
             if (_drawMode)
@@ -456,7 +463,8 @@ namespace Paint
 
                 _start = e.GetPosition(canvas);
                 _preview.HandleStart(_start);
-            } else
+            } 
+            else
             {
                 //Point pt = e.GetPosition((UIElement)sender);
 
@@ -484,11 +492,11 @@ namespace Paint
 
                 //    }
                 //}
-               
             }
-
         }
-        private void Border_MouseMove(object sender, MouseEventArgs e)
+
+        private void border_MouseMove(object sender, MouseEventArgs e)
+
         {
             if (_drawMode && _isDrawing && !_finishShape)
             {
@@ -510,7 +518,8 @@ namespace Paint
                 canvas.Children.Add(previewElement);
             }
         }
-        private void Border_MouseUp(object sender, MouseButtonEventArgs e)
+
+        private void border_MouseUp(object sender, MouseButtonEventArgs e)
         {
             if (_drawMode)
             {
@@ -547,5 +556,16 @@ namespace Paint
                 
             }
         }
+
+        private void zoomInButton_Click(object sender, RoutedEventArgs e)
+        {
+            _isZoomIn = !_isZoomIn;
+        }
+
+        private void zoomOutButton_Click(object sender, RoutedEventArgs e)
+        {
+            _isZoomOut = !_isZoomOut;
+        }
+
     }
 }

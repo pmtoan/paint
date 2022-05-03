@@ -101,5 +101,10 @@ namespace EllipseShape
             var ellipse = shape as EllipseEntity;
             return ellipse.StrokeType;
         }
+
+        public string ColorFill(IShapeEntity shape)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
