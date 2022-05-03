@@ -12,15 +12,16 @@
     <None Remove="images\cut.png" />
     <None Remove="images\ellipse.png" />
     <None Remove="images\eraser.png" />
+    <None Remove="images\export.png" />
     <None Remove="images\fill.png" />
     <None Remove="images\folder.png" />
     <None Remove="images\import.png" />
     <None Remove="images\Line-size.png" />
     <None Remove="images\Line.png" />
     <None Remove="images\paint - Shortcut.lnk" />
+    <None Remove="images\paint.png" />
     <None Remove="images\paste.png" />
     <None Remove="images\pencil.png" />
-    <None Remove="images\picture.png" />
     <None Remove="images\rectangle.png" />
     <None Remove="images\save.png" />
     <None Remove="images\redo.png" />
@@ -71,13 +72,14 @@
     <Resource Include="images\paint - Shortcut.lnk">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="images\paint.png" />
     <Resource Include="images\paste.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="images\pencil.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="images\picture.png">
+    <Resource Include="images\export.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="images\Rectangle.png">

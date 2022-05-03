@@ -1,5 +1,3 @@
-using System;
-using System.Drawing;
 using System.Windows;
 using System.Windows.Media;
 
@@ -14,6 +12,7 @@ namespace IContract
         double PositionY2(IShapeEntity shape);
         int Thickness(IShapeEntity shape);
         string Color(IShapeEntity shape);
+        string FillColor(IShapeEntity shape);
         DoubleCollection StrokeType(IShapeEntity shape);
     }
 }

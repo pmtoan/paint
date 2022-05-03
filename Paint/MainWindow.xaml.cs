@@ -5,18 +5,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Ribbon;
-using System.Windows.Data;
-using System.Windows.Documents;
 
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+
 namespace Paint
 {
     /// <summary>
@@ -28,8 +25,6 @@ namespace Paint
         bool _isDrawing = false;
         bool _drawMode = false;
         bool _finishShape = false;
-        bool _isZoomIn = false;
-        bool _isZoomOut = false;
 
         string _currentType = "";
         int _currentThickness = 1;
@@ -102,8 +97,6 @@ namespace Paint
                 }
             }
 
-            Title = $"Tìm thấy {_shapesPrototypes.Count} hình";
-
             BindingList<PluginItems> shapeItemSource = new BindingList<PluginItems>();
 
             //// Tạo ra các nút bấm tương ứng
@@ -154,6 +147,7 @@ namespace Paint
                         br.Write(painter.PositionY2(item));
                         br.Write(painter.Thickness(item));
                         br.Write(painter.Color(item));
+                        br.Write(painter.FillColor(item));
                         br.Write(strokeString.Trim());
                     }
                     else if(item == null)
@@ -184,7 +178,7 @@ namespace Paint
 
                     //Biến cho Shape
                     Point p1, p2;
-                    Color color;
+                    Color color, fillcolor;
                     int size;
                     string name, typeStroke;
 
@@ -199,6 +193,7 @@ namespace Paint
                         p2.Y = br.ReadDouble();
                         size = br.ReadInt32();
                         color = (Color)ColorConverter.ConvertFromString(br.ReadString());
+                        fillcolor = (Color)ColorConverter.ConvertFromString(br.ReadString());
                         typeStroke = br.ReadString();
 
                         IShapeEntity shape = null;
@@ -207,6 +202,7 @@ namespace Paint
                         shape.HandleEnd(p2);
                         shape.HandleThickness(size);
                         shape.HandleColor(color);
+                        shape.HandleFillColor(fillcolor);
                         if (typeStroke == "null")
                         {
                             typeStroke = null;
@@ -460,35 +456,6 @@ namespace Paint
                 _start = e.GetPosition(canvas);
                 _preview.HandleStart(_start);
             } 
-            else
-            {
-                //Point pt = e.GetPosition((UIElement)sender);
-
-                //// Perform the hit test against a given portion of the visual object tree.
-                //HitTestResult result = VisualTreeHelper.HitTest(canvas, pt);
-
-                //if (result != null)
-                //{
-                //    if (e.OriginalSource is UIElement)
-                //    {
-                //        UIElement a = (UIElement)e.OriginalSource;
-                //        Debug.WriteLine(a.GetType());
-                //        foreach (UIElement f in canvas.Children)
-                //        {
-                //            if (f.Equals(a))
-                //            {
-                //                Brush br = new SolidColorBrush(Colors.Yellow);
-                //                f.GetType().GetProperty("Fill").SetValue(f, br);
-
-                //                Debug.WriteLine(canvas.Children.IndexOf(f));
-
-                //            }
-
-                //        }
-
-                //    }
-                //}
-            }
         }
 
         private void border_MouseMove(object sender, MouseEventArgs e)
@@ -555,12 +522,24 @@ namespace Paint
 
         private void zoomInButton_Click(object sender, RoutedEventArgs e)
         {
-            _isZoomIn = !_isZoomIn;
+            if (canvas.ActualWidth > 300)
+            {
+                canvas.Width = canvas.ActualWidth * 0.8;
+                canvas.Height = canvas.ActualHeight * 0.8;
+                border.Width = border.ActualWidth * 0.8;
+                border.Height = border.ActualHeight * 0.8;
+            }
         }
 
         private void zoomOutButton_Click(object sender, RoutedEventArgs e)
         {
-            _isZoomOut = !_isZoomOut;
+            if (canvas.ActualWidth < 1500)
+            {
+                canvas.Width = canvas.ActualWidth / 0.8;
+                canvas.Height = canvas.ActualHeight / 0.8;
+                border.Width = border.ActualWidth / 0.8;
+                border.Height = border.ActualHeight / 0.8;
+            }
         }
 
     }

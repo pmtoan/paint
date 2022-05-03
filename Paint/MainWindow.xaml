@@ -8,28 +8,23 @@
         xmlns:syncfusion=" http://schemas.syncfusion.com/wpf" x:Class="Paint.MainWindow"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="1000" Loaded="Window_Loaded">
+        Title="Paint" Icon="./images/paint.png" Height="800" Width="1000" Loaded="Window_Loaded">
     <DockPanel LastChildFill="True">
         <ribbon:Ribbon DockPanel.Dock="Top">
             <Ribbon.QuickAccessToolBar>
                 <RibbonQuickAccessToolBar>
                     <RibbonSplitButton  x:Name="openButton" Click="openButton_Click" SmallImageSource="./images/folder.png" >
-                        <RibbonSplitMenuItem Header="Open file" Click="openButton_Click" />
-                        <RibbonSplitMenuItem Header="Insert Image" x:Name="exportButton" Click="exportButton_Click"/>
+                        <RibbonSplitMenuItem Header="Open file" Click="openButton_Click" ImageSource="./images/folder.png" Margin="0,10,0,5"/>
+                        <RibbonSplitMenuItem Header="Insert Image" x:Name="importButton" Click="importButton_Click" ImageSource="./images/import.png" Margin="0,5,0,10"/>
                     </RibbonSplitButton>
-                    <RibbonSplitButton  x:Name="saveButton" Click="saveButton_Click" SmallImageSource="./images/save.png" >
-                        <RibbonSplitMenuItem Header="Save file" Click="saveButton_Click" />
-                        <RibbonSplitMenuItem Header="Save as image" x:Name="importButton" Click="importButton_Click"/>
+                    <RibbonSplitButton  x:Name="saveButton" Click="saveButton_Click" SmallImageSource="./images/save.png" Margin="10,0,0,0">
+                        <RibbonSplitMenuItem Header="Save file" Click="saveButton_Click" ImageSource="./images/save.png" Margin="0,10,0,5"/>
+                        <RibbonSplitMenuItem Header="Save as image" x:Name="exportButton" Click="exportButton_Click" ImageSource="./images/export.png" Margin="0,5,0,10"/>
                     </RibbonSplitButton>
-                    <RibbonButton x:Name="undoButton" Click="undoButton_Click" SmallImageSource="./images/undo.png" />
-                    <RibbonButton x:Name="redoButton" Click="redoButton_Click" SmallImageSource="./images/redo.png" />
+                    <RibbonButton x:Name="undoButton" Click="undoButton_Click" SmallImageSource="./images/undo.png" Margin="10,0,0,0"/>
+                    <RibbonButton x:Name="redoButton" Click="redoButton_Click" SmallImageSource="./images/redo.png" Margin="10,0,0,0"/>
                 </RibbonQuickAccessToolBar>
             </Ribbon.QuickAccessToolBar>
-            
-            <ribbon:Ribbon.ApplicationMenu>
-                <ribbon:RibbonApplicationMenu >
-                </ribbon:RibbonApplicationMenu>
-            </ribbon:Ribbon.ApplicationMenu>
 
             <ribbon:RibbonTab Header="Home">
                 <ribbon:RibbonGroup Header="Clipboard">
@@ -180,14 +175,14 @@
             </ribbon:RibbonTab>
         </ribbon:Ribbon>
 
-        <DockPanel LastChildFill="True">
-            <Grid Background="Gray">
-                <Viewbox Stretch="Fill">
-                    <Canvas x:Name="canvas" Background="White" Focusable="False"  Width="300" Height="300">
+        <DockPanel LastChildFill="False">
+            <Viewbox Stretch="Fill">
+                <Grid Background="Gray">
+                    <Canvas x:Name="canvas" Background="White" Focusable="False" Width="800" Height="800">
                     </Canvas>
-                </Viewbox>
-                <Border x:Name="border" Background="Transparent" MouseDown="border_MouseDown" MouseMove="border_MouseMove" MouseUp="border_MouseUp"/>
-            </Grid>
+                    <Border Name="border" Width="800" Height="800" Background="Transparent" MouseDown="border_MouseDown" MouseMove="border_MouseMove" MouseUp="border_MouseUp"/>
+                </Grid>
+            </Viewbox>
         </DockPanel>
     </DockPanel>
 

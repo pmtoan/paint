@@ -1,9 +1,5 @@
 ﻿using IContract;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -100,6 +96,11 @@ namespace EllipseShape
         {
             var ellipse = shape as EllipseEntity;
             return ellipse.StrokeType;
+        }
+
+        public string FillColor(IShapeEntity shape)
+        {
+            throw new NotImplementedException();
         }
     }
 }
