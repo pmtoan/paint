@@ -26,8 +26,8 @@
                 <ribbon:RibbonGroup Header="File">
                     <ribbon:RibbonButton x:Name="saveButton" Click="saveButton_Click" Margin="5" Label="Save"  SmallImageSource="./images/save.png"/>
                     <ribbon:RibbonButton x:Name="openButton" Click="openButton_Click" Margin="5" Label="Open"  SmallImageSource="./images/folder.png"/>
-                    <ribbon:RibbonButton x:Name="exportButton" Click="exportButton_Click" Margin="5" Label="Export"  />
-                    <ribbon:RibbonButton x:Name="importButton" Click="importButton_Click" Margin="5" Label="Import"  SmallImageSource="./images/import.png"/>
+                    <ribbon:RibbonButton x:Name="exportButton" Click="exportButton_Click" Margin="5" Label="Export" SmallImageSource="./images/picture.png"/>
+                    <ribbon:RibbonButton x:Name="importButton" Click="importButton_Click" Margin="5" Label="Import" SmallImageSource="./images/import.png"/>
                 </ribbon:RibbonGroup>
                 <ribbon:RibbonGroup Header="Tool">
                     <StackPanel Orientation="Horizontal">

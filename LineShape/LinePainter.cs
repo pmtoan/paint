@@ -49,5 +49,20 @@ namespace LineShape
             var line = shape as LineEntity;
             return line.End.Y;
         }
+
+        public int Thickness(IShapeEntity shape)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string Color(IShapeEntity shape)
+        {
+            throw new NotImplementedException();
+        }
+
+        public DoubleCollection StrokeType(IShapeEntity shape)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

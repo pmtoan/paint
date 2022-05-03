@@ -19,6 +19,5 @@ namespace IContract
         void HandleThickness(int size);
         void HandleColor(Color color);
         void HandleStrokeType(string type);
-
     }
 }
