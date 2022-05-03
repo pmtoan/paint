@@ -50,6 +50,12 @@ namespace Paint
         List<Canvas> undoImage = new List<Canvas>();
         List<BitmapImage> undoBitmapImage = new List<BitmapImage>();
 
+        class PluginItems
+        {
+            public IShapeEntity PluginEntity { get; set; }
+            public string PluginIconPath { get; set; }
+        }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -109,89 +115,7 @@ namespace Paint
             }
             shapeList.ItemsSource = shapeItemSource;
         }
-        class PluginItems
-        {
-            public IShapeEntity PluginEntity { get; set; }
-            public string PluginIconPath { get; set; }
-        }
-<<<<<<< Updated upstream
-        private void border_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (_drawShape)
-            {
-                _isDrawing = true;
-                _start = e.GetPosition(canvas);
 
-                _preview.HandleStart(_start);
-            }
-        }
-        private void border_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (_isDrawing && _drawShape)
-            {
-                var end = e.GetPosition(canvas);
-                _preview.HandleEnd(end);
-
-                int _count = 0;
-                canvas.Children.Clear();
-                foreach (var item in _drawnShapes)
-                {
-                    if (item == null && imageImport[_count] != null)
-                    {
-                        canvas.Children.Add(imageImport[_count]);
-                        _count++;
-                    }
-                    else
-                    {
-                        IPaintBusiness painter = _painterPrototypes[item.Name];
-                        UIElement shape = painter.Draw(item);
-
-                        canvas.Children.Add(shape);
-                    }
-                }
-
-                var previewPainter = _painterPrototypes[_preview.Name];
-                var previewElement = previewPainter.Draw(_preview);
-                canvas.Children.Add(previewElement);
-            }
-        }
-        private void border_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (_drawShape)
-            {
-                _isDrawing = false;
-
-                var end = e.GetPosition(canvas); // Điểm kết thúc
-
-                _preview.HandleEnd(end);
-
-                _drawnShapes.Add(_preview.Clone() as IShapeEntity);
-            }
-        }
-=======
-
->>>>>>> Stashed changes
-        private void chooseShapeBtnClick(object sender, RoutedEventArgs e)
-        {
-            var button = sender as RibbonRadioButton;
-            var entity = button.Tag as IShapeEntity;
-            if (entity != null)
-            {
-                if (_currentType != entity.Name || _currentType == "")
-                {
-                    _drawMode = true;
-                    _currentType = entity!.Name;
-
-                    _preview = (_shapesPrototypes[_currentType].Clone() as IShapeEntity)!;
-                    _preview.HandleColor(_currentStrokeColor);
-                    _preview.HandleThickness(_currentThickness);
-                    _preview.HandleStrokeType(_currentStrokeType);
-
-                    Grid.SetZIndex(canvas, 0);
-                    Grid.SetZIndex(border, 1);
-                }
-            }
-        }
         private void saveButton_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -241,6 +165,8 @@ namespace Paint
                 }
                 br.Close();
             }
+
+            e.Handled = true;
         }
         private void openButton_Click(object sender, RoutedEventArgs e)
         {
@@ -325,6 +251,8 @@ namespace Paint
                     }
                 }
             }
+
+            e.Handled = true;
         }
         private void exportButton_Click(object sender, RoutedEventArgs e)
         {
@@ -353,6 +281,8 @@ namespace Paint
                     encoder.Save(outStream);
                 }
             }
+
+            e.Handled = true;
         }
         private void importButton_Click(object sender, RoutedEventArgs e)
         {
@@ -390,7 +320,10 @@ namespace Paint
                     canvas.Children.Add(shape);
                 }
             }
+
+            e.Handled = true;
         }
+
         private void undoButton_Click(object sender, RoutedEventArgs e)
         {
             if (_drawnShapes.Count >= 1)
@@ -434,10 +367,7 @@ namespace Paint
                 }
             }
         }
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
         private void SizeGallery_SelectionChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             foreach (RibbonGalleryItem item in SizeCategory.Items)
@@ -488,17 +418,34 @@ namespace Paint
                 }
             }
         }
-
-<<<<<<< Updated upstream
-=======
         private void eraserButton_Click(object sender, RoutedEventArgs e)
         {
             _drawMode = false;
             Grid.SetZIndex(canvas, 1);
             Grid.SetZIndex(border, 0);
         }
-        
 
+        private void chooseShapeBtnClick(object sender, RoutedEventArgs e)
+        {
+            var button = sender as RibbonRadioButton;
+            var entity = button.Tag as IShapeEntity;
+            if (entity != null)
+            {
+                if (_currentType != entity.Name || _currentType == "")
+                {
+                    _drawMode = true;
+                    _currentType = entity!.Name;
+
+                    _preview = (_shapesPrototypes[_currentType].Clone() as IShapeEntity)!;
+                    _preview.HandleColor(_currentStrokeColor);
+                    _preview.HandleThickness(_currentThickness);
+                    _preview.HandleStrokeType(_currentStrokeType);
+
+                    Grid.SetZIndex(canvas, 0);
+                    Grid.SetZIndex(border, 1);
+                }
+            }
+        }
         private void Border_MouseDown(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
@@ -541,7 +488,6 @@ namespace Paint
             }
 
         }
-
         private void Border_MouseMove(object sender, MouseEventArgs e)
         {
             if (_drawMode && _isDrawing && !_finishShape)
@@ -564,7 +510,6 @@ namespace Paint
                 canvas.Children.Add(previewElement);
             }
         }
-
         private void Border_MouseUp(object sender, MouseButtonEventArgs e)
         {
             if (_drawMode)
@@ -579,7 +524,6 @@ namespace Paint
                 _drawnShapes.Add(_preview.Clone() as IShapeEntity);
             }
         }
-
         private void canvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Debug.WriteLine("Canvas mouse down");
@@ -603,6 +547,5 @@ namespace Paint
                 
             }
         }
->>>>>>> Stashed changes
     }
 }
