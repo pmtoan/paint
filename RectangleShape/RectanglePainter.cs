@@ -89,17 +89,20 @@ namespace RectangleShape
 
         public int Thickness(IShapeEntity shape)
         {
-            throw new NotImplementedException();
+            var rectangle = shape as RectangleEntity;
+            return rectangle.Size;
         }
 
         public string Color(IShapeEntity shape)
         {
-            throw new NotImplementedException();
+            var rectangle = shape as RectangleEntity;
+            return rectangle.ColorStroke.ToString();
         }
 
         public DoubleCollection StrokeType(IShapeEntity shape)
         {
-            throw new NotImplementedException();
+            var rectangle = shape as RectangleEntity;
+            return rectangle.StrokeType;
         }
     }
 }

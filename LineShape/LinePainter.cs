@@ -52,17 +52,20 @@ namespace LineShape
 
         public int Thickness(IShapeEntity shape)
         {
-            throw new NotImplementedException();
+            var line = shape as LineEntity;
+            return line.Size;
         }
 
         public string Color(IShapeEntity shape)
         {
-            throw new NotImplementedException();
+            var line = shape as LineEntity;
+            return line.ColorApply.ToString();
         }
 
         public DoubleCollection StrokeType(IShapeEntity shape)
         {
-            throw new NotImplementedException();
+            var line = shape as LineEntity;
+            return line.StrokeType;
         }
     }
 }

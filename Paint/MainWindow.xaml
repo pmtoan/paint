@@ -42,12 +42,6 @@
                     <ribbon:RibbonButton Name="zoomInButton" Click="zoomInButton_Click" Margin="5" Label=" Zoom In" SmallImageSource="./images/zoomin.png"/>
                     <ribbon:RibbonButton Name="zoomOutButton" Click="zoomOutButton_Click" Margin="5" Label=" Zoom Out" SmallImageSource="./images/zoomout.png"/>
                 </ribbon:RibbonGroup>
-                <ribbon:RibbonGroup Header="File">
-                    <ribbon:RibbonButton x:Name="saveButton" Click="saveButton_Click" Margin="5" Label=" Save"  SmallImageSource="./images/save.png"/>
-                    <ribbon:RibbonButton x:Name="openButton" Click="openButton_Click" Margin="5" Label=" Open"  SmallImageSource="./images/folder.png"/>
-                    <ribbon:RibbonButton x:Name="exportButton" Click="exportButton_Click" Margin="5" Label=" Export" SmallImageSource="./images/picture.png"/>
-                    <ribbon:RibbonButton x:Name="importButton" Click="importButton_Click" Margin="5" Label=" Import" SmallImageSource="./images/import.png"/>
-                </ribbon:RibbonGroup>
                 <ribbon:RibbonGroup Header="Tool">
                     <StackPanel Orientation="Horizontal">
                         <ribbon:RibbonButton Margin="5" SmallImageSource="./images/pencil.png"/>
