@@ -14,6 +14,7 @@ namespace EllipseShape
         public int Size { get; set; }
         public DoubleCollection StrokeType { get; set; }
         public Color ColorApply { get; set; }
+        public Color ColorFill { get; set; }
 
         public string Name => "Ellipse";
 
@@ -35,6 +36,11 @@ namespace EllipseShape
         public void HandleColor(Color color)
         {
             ColorApply = color;
+        }
+
+        public void HandleFillColor(Color color)
+        {
+            ColorFill = color;
         }
 
         public void HandleStrokeType(string type)

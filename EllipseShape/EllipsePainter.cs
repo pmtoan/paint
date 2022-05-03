@@ -55,6 +55,7 @@ namespace EllipseShape
                 Height = Math.Abs(height),
                 StrokeThickness = ellipse.Size,
                 Stroke = new SolidColorBrush(ellipse.ColorApply),
+                Fill = new SolidColorBrush(ellipse.ColorFill),
                 StrokeDashArray = ellipse.StrokeType
             };
             Canvas.SetLeft(element, ellipse.TopLeft.X);
