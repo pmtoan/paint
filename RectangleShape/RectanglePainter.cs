@@ -98,6 +98,11 @@ namespace RectangleShape
             var rectangle = shape as RectangleEntity;
             return rectangle.ColorStroke.ToString();
         }
+        public string ColorFill(IShapeEntity shape)
+        {
+            var rectangle = shape as RectangleEntity;
+            return rectangle.ColorFill.ToString();
+        }
 
         public DoubleCollection StrokeType(IShapeEntity shape)
         {

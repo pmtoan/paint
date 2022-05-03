@@ -67,5 +67,10 @@ namespace LineShape
             var line = shape as LineEntity;
             return line.StrokeType;
         }
+
+        public string ColorFill(IShapeEntity shape)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
