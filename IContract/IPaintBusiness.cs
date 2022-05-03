@@ -14,6 +14,8 @@ namespace IContract
         double PositionY2(IShapeEntity shape);
         int Thickness(IShapeEntity shape);
         string Color(IShapeEntity shape);
+        string ColorFill(IShapeEntity shape);
         DoubleCollection StrokeType(IShapeEntity shape);
+
     }
 }
