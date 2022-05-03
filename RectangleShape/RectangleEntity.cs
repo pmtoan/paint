@@ -14,7 +14,8 @@ namespace RectangleShape
         public Point MousePoint { get; set; }
         public int Size { get; set; }
         public DoubleCollection StrokeType { get; set; }
-        public Color ColorApply { get; set; }
+        public Color ColorStroke { get; set; }
+        public Color ColorFill { get; set; }
 
         public string Name => "Rectangle";
 
@@ -46,16 +47,25 @@ namespace RectangleShape
             }  else
             {
                 StrokeType = new DoubleCollection();
+                
             }
         }
 
         public void HandleColor(Color color)
         {
-            ColorApply = color;
+            ColorStroke = color;
         }
+
+        public void HandleFillColor(Color color)
+        {
+            ColorFill = color;
+        }
+
         public object Clone()
         {
             return MemberwiseClone();
         }
+
+  
     }
 }

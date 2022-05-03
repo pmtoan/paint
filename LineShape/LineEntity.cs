@@ -57,5 +57,9 @@ namespace LineShape
         {
             return MemberwiseClone();
         }
+
+        public void HandleFillColor(Color color)
+        {
+        }
     }
 }

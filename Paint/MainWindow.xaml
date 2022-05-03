@@ -11,9 +11,24 @@
         Title="MainWindow" Height="800" Width="1000" Loaded="Window_Loaded">
     <DockPanel LastChildFill="True">
         <ribbon:Ribbon DockPanel.Dock="Top">
+            <Ribbon.QuickAccessToolBar>
+                <RibbonQuickAccessToolBar>
+                    <RibbonSplitButton x:Name ="Save" SmallImageSource="./images/save.png" >
+                        <RibbonSplitMenuItem Header="Undo 1" />
+                        <RibbonSplitMenuItem Header="Undo 2" />
+                        <RibbonSplitMenuItem Header="Undo 3" />
+                    </RibbonSplitButton>
+                    <RibbonButton x:Name ="Undo" SmallImageSource="./images/undo.png" />
+                    <RibbonButton x:Name="Redo" SmallImageSource="./images/redo.png" />
+                </RibbonQuickAccessToolBar>
+            </Ribbon.QuickAccessToolBar>
+            
             <ribbon:Ribbon.ApplicationMenu>
-                <ribbon:RibbonApplicationMenu>
-                    <ribbon:RibbonApplicationMenuItem x:Name="item1" Header="Lorem"/>
+                <ribbon:RibbonApplicationMenu >
+                    <ribbon:RibbonApplicationMenuItem x:Name="saveButton" Click="saveButton_Click" Margin="5" Header="Save"/>
+                    <ribbon:RibbonApplicationMenuItem x:Name="openButton" Click="openButton_Click" Margin="5" Header="Open"/>
+                    <ribbon:RibbonApplicationMenuItem x:Name="exportButton" Click="exportButton_Click" Margin="5" Header="Export" />
+                    <ribbon:RibbonApplicationMenuItem x:Name="importButton" Click="importButton_Click" Margin="5" Header="Import" />
                 </ribbon:RibbonApplicationMenu>
             </ribbon:Ribbon.ApplicationMenu>
 
@@ -40,7 +55,7 @@
                         <ribbon:RibbonButton Margin="5" SmallImageSource="./images/text.png"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <ribbon:RibbonButton Margin="5" SmallImageSource="./images/eraser.png"/>
+                        <ribbon:RibbonButton Name="eraserButton" Click="eraserButton_Click" Margin="5" SmallImageSource="./images/eraser.png"/>
                         <ribbon:RibbonButton x:Name="undoButton" Click="undoButton_Click" Margin="5" SmallImageSource="./images/undo.png"/>
                         <ribbon:RibbonButton x:Name="redoButton" Click="redoButton_Click" Margin="5" SmallImageSource="./images/redo.png"/>
                     </StackPanel>
@@ -56,8 +71,8 @@
                             </ribbon:RibbonControlGroup.ItemsPanel>
                             <ribbon:RibbonControlGroup.ItemTemplate>
                                 <DataTemplate>
-                                    <ribbon:RibbonButton SmallImageSource="{Binding PluginIconPath}"
-                                                  Click="chooseShapeBtnClick"
+                                    <ribbon:RibbonRadioButton  SmallImageSource="{Binding PluginIconPath}"
+                                                  Click="chooseShapeBtnClick" 
                                                   Tag="{Binding PluginEntity}"  Width="25" Height="25" />
                                 </DataTemplate>
                             </ribbon:RibbonControlGroup.ItemTemplate>
@@ -163,7 +178,7 @@
                             <Label Content="Fill" FontSize="12"/>
                             <xctk:ColorPicker Name="FillColor" Margin="29,0,0,0"
                                           DisplayColorAndName="False" Height="25" Width="70"
-                                          SelectedColor="Black" ShowDropDownButton="False"
+                                          SelectedColor="Transparent" ShowDropDownButton="False"
                                           AvailableColorsSortingMode="HueSaturationBrightness"
                                               SelectedColorChanged="FillColor_SelectedColorChanged"/>
                         </StackPanel>

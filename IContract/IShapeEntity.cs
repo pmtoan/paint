@@ -19,5 +19,10 @@ namespace IContract
         void HandleThickness(int size);
         void HandleColor(Color color);
         void HandleStrokeType(string type);
+<<<<<<< Updated upstream
+=======
+        void HandleFillColor(Color color);
+
+>>>>>>> Stashed changes
     }
 }

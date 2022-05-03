@@ -26,13 +26,13 @@ namespace Paint
     {
         // State
         bool _isDrawing = false;
-        bool _drawShape = false;
-        int _sizeCanvas = 100;
+        bool _drawMode = false;
+        bool _finishShape = false;
 
         string _currentType = "";
         int _currentThickness = 1;
         Color _currentStrokeColor = Colors.Black;
-        Color _currentFillColor = Colors.Black;
+        Color _currentFillColor = Colors.Transparent;
         string _currentStrokeType = null;
         IShapeEntity _preview = null;
 
@@ -114,74 +114,24 @@ namespace Paint
             public IShapeEntity PluginEntity { get; set; }
             public string PluginIconPath { get; set; }
         }
-        private void border_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (_drawShape)
-            {
-                _isDrawing = true;
-                _start = e.GetPosition(canvas);
-
-                _preview.HandleStart(_start);
-            }
-        }
-        private void border_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (_isDrawing && _drawShape)
-            {
-                var end = e.GetPosition(canvas);
-                _preview.HandleEnd(end);
-
-                int _count = 0;
-                canvas.Children.Clear();
-                foreach (var item in _drawnShapes)
-                {
-                    if (item == null && imageImport[_count] != null)
-                    {
-                        canvas.Children.Add(imageImport[_count]);
-                        _count++;
-                    }
-                    else
-                    {
-                        IPaintBusiness painter = _painterPrototypes[item.Name];
-                        UIElement shape = painter.Draw(item);
-
-                        canvas.Children.Add(shape);
-                    }
-                }
-
-                var previewPainter = _painterPrototypes[_preview.Name];
-                var previewElement = previewPainter.Draw(_preview);
-                canvas.Children.Add(previewElement);
-            }
-        }
-        private void border_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (_drawShape)
-            {
-                _isDrawing = false;
-
-                var end = e.GetPosition(canvas); // Điểm kết thúc
-
-                _preview.HandleEnd(end);
-
-                _drawnShapes.Add(_preview.Clone() as IShapeEntity);
-            }
-        }
         private void chooseShapeBtnClick(object sender, RoutedEventArgs e)
         {
-            var button = sender as Button;
+            var button = sender as RibbonRadioButton;
             var entity = button.Tag as IShapeEntity;
             if (entity != null)
             {
                 if (_currentType != entity.Name || _currentType == "")
                 {
-                    _drawShape = true;
+                    _drawMode = true;
                     _currentType = entity!.Name;
 
-                    _preview = (_shapesPrototypes[entity.Name].Clone() as IShapeEntity)!;
+                    _preview = (_shapesPrototypes[_currentType].Clone() as IShapeEntity)!;
                     _preview.HandleColor(_currentStrokeColor);
                     _preview.HandleThickness(_currentThickness);
                     _preview.HandleStrokeType(_currentStrokeType);
+
+                    Grid.SetZIndex(canvas, 0);
+                    Grid.SetZIndex(border, 1);
                 }
             }
         }
@@ -457,6 +407,10 @@ namespace Paint
             if (FillColor.SelectedColor != null)
             {
                 _currentFillColor = (Color)FillColor.SelectedColor;
+                if (_preview != null)
+                {
+                    _preview.HandleFillColor(_currentFillColor);
+                }
             }
         }
         private void StrokeTypeGallery_SelectionChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -471,6 +425,119 @@ namespace Paint
                         _preview.HandleStrokeType(_currentStrokeType);
                     }
                 }
+            }
+        }
+
+        private void eraserButton_Click(object sender, RoutedEventArgs e)
+        {
+            _drawMode = false;
+            Grid.SetZIndex(canvas, 1);
+            Grid.SetZIndex(border, 0);
+        }
+        
+
+        private void Border_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+            if (_drawMode)
+            {
+                _isDrawing = true;
+                _finishShape = false;
+
+                _start = e.GetPosition(canvas);
+                _preview.HandleStart(_start);
+            } else
+            {
+                //Point pt = e.GetPosition((UIElement)sender);
+
+                //// Perform the hit test against a given portion of the visual object tree.
+                //HitTestResult result = VisualTreeHelper.HitTest(canvas, pt);
+
+                //if (result != null)
+                //{
+                //    if (e.OriginalSource is UIElement)
+                //    {
+                //        UIElement a = (UIElement)e.OriginalSource;
+                //        Debug.WriteLine(a.GetType());
+                //        foreach (UIElement f in canvas.Children)
+                //        {
+                //            if (f.Equals(a))
+                //            {
+                //                Brush br = new SolidColorBrush(Colors.Yellow);
+                //                f.GetType().GetProperty("Fill").SetValue(f, br);
+
+                //                Debug.WriteLine(canvas.Children.IndexOf(f));
+
+                //            }
+
+                //        }
+
+                //    }
+                //}
+               
+            }
+
+        }
+
+        private void Border_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (_drawMode && _isDrawing && !_finishShape)
+            {
+                var end = e.GetPosition(canvas);
+                _preview.HandleEnd(end);
+
+                canvas.Children.Clear();
+
+                foreach (var item in _drawnShapes)
+                {
+                    IPaintBusiness painter = _painterPrototypes[item.Name];
+                    UIElement shape = painter.Draw(item);
+
+                    canvas.Children.Add(shape);
+                }
+
+                var previewPainter = _painterPrototypes[_preview.Name];
+                var previewElement = previewPainter.Draw(_preview);
+                canvas.Children.Add(previewElement);
+            }
+        }
+
+        private void Border_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (_drawMode)
+            {
+                _isDrawing = false;
+                _finishShape = true;
+
+                var end = e.GetPosition(canvas); // Điểm kết thúc
+
+                _preview.HandleEnd(end);
+                
+                _drawnShapes.Add(_preview.Clone() as IShapeEntity);
+            }
+        }
+
+        private void canvas_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Debug.WriteLine("Canvas mouse down");
+
+            if(e.OriginalSource is UIElement)
+            {
+                UIElement a = (UIElement)e.OriginalSource;
+                Debug.WriteLine(a.GetType());
+                foreach(UIElement f in canvas.Children)
+                {
+                    if(f.Equals(a))
+                    {
+                        Brush br = new SolidColorBrush(Colors.Yellow);
+                        f.GetType().GetProperty("Fill").SetValue(f, br);
+
+                        Debug.WriteLine(canvas.Children.IndexOf(f));
+                        
+                    }
+                 
+                }
+                
             }
         }
     }
