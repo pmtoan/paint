@@ -85,5 +85,20 @@ namespace RectangleShape
             var rectangle = shape as RectangleEntity;
             return rectangle.AnchorPoint.Y;
         }
+
+        public int Thickness(IShapeEntity shape)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string Color(IShapeEntity shape)
+        {
+            throw new NotImplementedException();
+        }
+
+        public DoubleCollection StrokeType(IShapeEntity shape)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

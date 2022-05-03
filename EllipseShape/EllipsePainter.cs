@@ -49,8 +49,6 @@ namespace EllipseShape
                     new Point(ellipse.MousePoint.X, ellipse.AnchorPoint.Y);
             }
 
-         
-
             var element = new Ellipse()
             {
                 Width = Math.Abs(width),
@@ -83,6 +81,24 @@ namespace EllipseShape
         {
             var ellipse = shape as EllipseEntity;
             return ellipse.AnchorPoint.Y;
+        }
+
+        public int Thickness(IShapeEntity shape)
+        {
+            var ellipse = shape as EllipseEntity;
+            return ellipse.Size;
+        }
+
+        public string Color(IShapeEntity shape)
+        {
+            var ellipse = shape as EllipseEntity;
+            return ellipse.ColorApply.ToString();
+        }
+
+        public DoubleCollection StrokeType(IShapeEntity shape)
+        {
+            var ellipse = shape as EllipseEntity;
+            return ellipse.StrokeType;
         }
     }
 }

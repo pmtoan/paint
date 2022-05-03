@@ -43,11 +43,16 @@ namespace Paint
         Dictionary<string, IPaintBusiness> _painterPrototypes = new Dictionary<string, IPaintBusiness>();
         Dictionary<string, IShapeEntity> _shapesPrototypes = new Dictionary<string, IShapeEntity>();
 
+        List<Canvas> imageImport = new List<Canvas>();
+        List<BitmapImage> bitmapImageImport = new List<BitmapImage>();
+
+        List<Canvas> undoImage = new List<Canvas>();
+        List<BitmapImage> undoBitmapImage = new List<BitmapImage>();
+
         public MainWindow()
         {
             InitializeComponent();
         }
-
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             var exeFolder = AppDomain.CurrentDomain.BaseDirectory;
@@ -103,13 +108,11 @@ namespace Paint
             }
             shapeList.ItemsSource = shapeItemSource;
         }
-
         class PluginItems
         {
             public IShapeEntity PluginEntity { get; set; }
             public string PluginIconPath { get; set; }
         }
-
         private void border_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (_drawShape)
@@ -120,7 +123,6 @@ namespace Paint
                 _preview.HandleStart(_start);
             }
         }
-
         private void border_MouseMove(object sender, MouseEventArgs e)
         {
             if (_isDrawing && _drawShape)
@@ -128,16 +130,22 @@ namespace Paint
                 var end = e.GetPosition(canvas);
                 _preview.HandleEnd(end);
 
-                // Xóa đi tất cả bản vẽ cũ và vẽ lại những đường thẳng trước đó
-                canvas.Children.Clear(); // Xóa đi toàn bộ
-
-                // Vẽ lại những hình đã vẽ trước đó
+                int _count = 0;
+                canvas.Children.Clear();
                 foreach (var item in _drawnShapes)
                 {
-                    IPaintBusiness painter = _painterPrototypes[item.Name];
-                    UIElement shape = painter.Draw(item);
+                    if (item == null && imageImport[_count] != null)
+                    {
+                        canvas.Children.Add(imageImport[_count]);
+                        _count++;
+                    }
+                    else
+                    {
+                        IPaintBusiness painter = _painterPrototypes[item.Name];
+                        UIElement shape = painter.Draw(item);
 
-                    canvas.Children.Add(shape);
+                        canvas.Children.Add(shape);
+                    }
                 }
 
                 var previewPainter = _painterPrototypes[_preview.Name];
@@ -145,7 +153,6 @@ namespace Paint
                 canvas.Children.Add(previewElement);
             }
         }
-
         private void border_MouseUp(object sender, MouseButtonEventArgs e)
         {
             if (_drawShape)
@@ -159,12 +166,11 @@ namespace Paint
                 _drawnShapes.Add(_preview.Clone() as IShapeEntity);
             }
         }
-
         private void chooseShapeBtnClick(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var entity = button.Tag as IShapeEntity;
-            if(entity != null)
+            if (entity != null)
             {
                 if (_currentType != entity.Name || _currentType == "")
                 {
@@ -178,7 +184,6 @@ namespace Paint
                 }
             }
         }
-
         private void saveButton_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -186,19 +191,49 @@ namespace Paint
             {
                 FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.Create, FileAccess.Write);
                 BinaryWriter br = new BinaryWriter(fs);
+                int count = 0;
                 foreach (var item in _drawnShapes)
                 {
-                    IPaintBusiness painter = _painterPrototypes[item.Name];
-                    br.Write(item.Name);
-                    br.Write(painter.PositionX1(item));
-                    br.Write(painter.PositionY1(item));
-                    br.Write(painter.PositionX2(item));
-                    br.Write(painter.PositionY2(item));
+                    if (item != null)
+                    {
+                        IPaintBusiness painter = _painterPrototypes[item.Name];
+                        string strokeString = "";
+                        DoubleCollection list = painter.StrokeType(item);
+                        if (painter.StrokeType(item).Count != 0)
+                        {
+                            for (int i = 0; i < list.Count; i++)
+                            {
+                                double stroke = list[i];
+                                strokeString = strokeString + stroke.ToString() + " ";
+                            }
+                        }
+                        else
+                        {
+                            strokeString = "null";
+                        }
+
+                        br.Write("shape");
+                        br.Write(item.Name);
+                        br.Write(painter.PositionX1(item));
+                        br.Write(painter.PositionY1(item));
+                        br.Write(painter.PositionX2(item));
+                        br.Write(painter.PositionY2(item));
+                        br.Write(painter.Thickness(item));
+                        br.Write(painter.Color(item));
+                        br.Write(strokeString.Trim());
+                    }
+                    else if(item == null)
+                    {
+                        br.Write("image");
+                        br.Write(imageImport[count].Width.ToString());
+                        br.Write(imageImport[count].Height.ToString());
+                        br.Write(bitmapImageImport[count].ToString());
+                        count++;
+                    }
                 }
                 br.Close();
             }
         }
-
         private void openButton_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -209,29 +244,78 @@ namespace Paint
                 _drawnShapes.Clear();
                 while (br.BaseStream.Position < br.BaseStream.Length)
                 {
-                    Point p1, p2;
-                    string name = br.ReadString();
-                    p1.X = br.ReadDouble();
-                    p1.Y = br.ReadDouble();
-                    p2.X = br.ReadDouble();
-                    p2.Y = br.ReadDouble();
-                    IShapeEntity shape = null;
-                    shape = (_shapesPrototypes[name].Clone() as IShapeEntity)!;
-                    shape.HandleStart(p1);
-                    shape.HandleEnd(p2);
-                    _drawnShapes.Add(shape);
-                }
-                canvas.Children.Clear(); // Xóa đi toàn bộ
+                    string typeCanvas = br.ReadString();
 
-                // Vẽ lại những hình đã vẽ trước đó
+                    //Biến cho Shape
+                    Point p1, p2;
+                    Color color;
+                    int size;
+                    string name, typeStroke;
+
+                    //Biến cho Image
+                    string widthImage, heightImage, imageBrush;
+                    if (typeCanvas == "shape")
+                    {
+                        name = br.ReadString();
+                        p1.X = br.ReadDouble();
+                        p1.Y = br.ReadDouble();
+                        p2.X = br.ReadDouble();
+                        p2.Y = br.ReadDouble();
+                        size = br.ReadInt32();
+                        color = (Color)ColorConverter.ConvertFromString(br.ReadString());
+                        typeStroke = br.ReadString();
+
+                        IShapeEntity shape = null;
+                        shape = (_shapesPrototypes[name].Clone() as IShapeEntity)!;
+                        shape.HandleStart(p1);
+                        shape.HandleEnd(p2);
+                        shape.HandleThickness(size);
+                        shape.HandleColor(color);
+                        if (typeStroke == "null")
+                        {
+                            typeStroke = null;
+                        }
+                        shape.HandleStrokeType(typeStroke);
+                        _drawnShapes.Add(shape);
+                    }
+                    else if(typeCanvas == "image")
+                    {
+                        widthImage = br.ReadString();
+                        heightImage = br.ReadString();
+                        imageBrush = br.ReadString();
+
+                        IShapeEntity shape = null;
+                        _drawnShapes.Add(shape);
+
+                        Canvas imageSave = new Canvas();
+                        imageSave.Width = Convert.ToDouble(widthImage);
+                        imageSave.Height = Convert.ToDouble(heightImage);
+
+                        Uri imageUri = new Uri(imageBrush, UriKind.Relative);
+                        BitmapImage theImage = new BitmapImage(imageUri);
+                        ImageBrush myImageBrush = new ImageBrush(theImage);
+                        imageSave.Background = myImageBrush;
+                        imageImport.Add(imageSave);
+                        bitmapImageImport.Add(theImage);
+                    }
+                }
+                int _count = 0;
+                canvas.Children.Clear();
                 foreach (var item in _drawnShapes)
                 {
-                    IPaintBusiness painter = _painterPrototypes[item.Name];
-                    UIElement shape = painter.Draw(item);
+                    if (item == null && imageImport[_count] != null)
+                    {
+                        canvas.Children.Add(imageImport[_count]);
+                        _count++;
+                    }
+                    else
+                    {
+                        IPaintBusiness painter = _painterPrototypes[item.Name];
+                        UIElement shape = painter.Draw(item);
 
-                    canvas.Children.Add(shape);
+                        canvas.Children.Add(shape);
+                    }
                 }
-                br.Close();
             }
         }
         private void exportButton_Click(object sender, RoutedEventArgs e)
@@ -271,58 +355,80 @@ namespace Paint
                 (new Uri(openFileDialog.FileName, UriKind.Relative));
 
                 ImageBrush myImageBrush = new ImageBrush(theImage);
+                Canvas newImage = new Canvas();
+                newImage.Width = theImage.Width / 3;
+                newImage.Height = theImage.Height / 3;
+                newImage.Background = myImageBrush;
+                imageImport.Add(newImage);
+                bitmapImageImport.Add(theImage);
+                IShapeEntity shapeImage = null;
+                _drawnShapes.Add(shapeImage);
+            }
 
-                Canvas myCanvas = new Canvas();
-                myCanvas.Width = 400;
-                myCanvas.Height = 266;
-                myCanvas.Background = myImageBrush;
+            int _count = 0;
+            canvas.Children.Clear();
+            foreach (var item in _drawnShapes)
+            {
+                if (item == null && imageImport[_count] != null)
+                {
+                    canvas.Children.Add(imageImport[_count]);
+                    _count++;
+                }
+                else
+                {
+                    IPaintBusiness painter = _painterPrototypes[item.Name];
+                    UIElement shape = painter.Draw(item);
 
-                canvas.Children.Add(myCanvas);
+                    canvas.Children.Add(shape);
+                }
+            }
         }
-
         private void undoButton_Click(object sender, RoutedEventArgs e)
         {
             if (_drawnShapes.Count >= 1)
             {
+                if (_drawnShapes[_drawnShapes.Count - 1] == null)
+                {
+                    undoImage.Add(imageImport[imageImport.Count - 1]);
+                    imageImport.RemoveAt(imageImport.Count - 1);
+                    undoBitmapImage.Add(bitmapImageImport[bitmapImageImport.Count - 1]);
+                    bitmapImageImport.RemoveAt(bitmapImageImport.Count - 1);
+                }
+
                 _stackUndoShape.Add(_drawnShapes[_drawnShapes.Count - 1]);
                 _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
 
-                canvas.Children.Clear();
-
-                foreach (var item in _drawnShapes)
-                {
-                    IPaintBusiness painter = _painterPrototypes[item.Name];
-                    UIElement shape = painter.Draw(item);
-
-                    canvas.Children.Add(shape);
-                }
+                canvas.Children.RemoveAt(canvas.Children.Count - 1);
             }
 
         }
-
         private void redoButton_Click(object sender, RoutedEventArgs e)
         {
-            if (_stackUndoShape.Count >= 1)
+            if (_stackUndoShape.Count > 0)
             {
                 _drawnShapes.Add(_stackUndoShape[_stackUndoShape.Count - 1]);
                 _stackUndoShape.RemoveAt(_stackUndoShape.Count - 1);
 
-                canvas.Children.Clear();
-
-                foreach (var item in _drawnShapes)
+                if (_drawnShapes[_drawnShapes.Count - 1] == null)
                 {
-                    IPaintBusiness painter = _painterPrototypes[item.Name];
-                    UIElement shape = painter.Draw(item);
+                    imageImport.Add(undoImage[undoImage.Count - 1]);
+                    undoImage.RemoveAt(undoImage.Count - 1);
+                    bitmapImageImport.Add(undoBitmapImage[undoBitmapImage.Count - 1]);
+                    undoBitmapImage.RemoveAt(undoBitmapImage.Count - 1);
 
+                    canvas.Children.Add(imageImport[imageImport.Count - 1]);
+                } 
+                else if(_drawnShapes[_drawnShapes.Count - 1] != null)
+                {
+                    IPaintBusiness painter = _painterPrototypes[_drawnShapes[_drawnShapes.Count-1].Name];
+                    UIElement shape = painter.Draw(_drawnShapes[_drawnShapes.Count - 1]);
                     canvas.Children.Add(shape);
                 }
             }
         }
-
-
         private void SizeGallery_SelectionChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            foreach(RibbonGalleryItem item in SizeCategory.Items)
+            foreach (RibbonGalleryItem item in SizeCategory.Items)
             {
                 if (item.IsSelected)
                 {
@@ -334,7 +440,6 @@ namespace Paint
                 }
             }
         }
-
         private void StrokeColor_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
         {
             if (StrokeColor.SelectedColor != null)
@@ -346,7 +451,6 @@ namespace Paint
                 }
             }
         }
-
         private void FillColor_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
         {
             if (FillColor.SelectedColor != null)
@@ -354,7 +458,6 @@ namespace Paint
                 _currentFillColor = (Color)FillColor.SelectedColor;
             }
         }
-
         private void StrokeTypeGallery_SelectionChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             foreach (RibbonGalleryItem item in StrokeTypeCategory.Items)
@@ -369,5 +472,6 @@ namespace Paint
                 }
             }
         }
+
     }
 }
