@@ -173,7 +173,6 @@ namespace Paint
                         br.Write(painter.PositionY2(item));
                         br.Write(painter.Thickness(item));
                         br.Write(painter.Color(item));
-                        br.Write(painter.ColorFill(item));
                         br.Write(strokeString.Trim());
                     }
                     else if(item == null)
@@ -202,7 +201,7 @@ namespace Paint
 
                     //Biến cho Shape
                     Point p1, p2;
-                    Color color, colorfill;
+                    Color color;
                     int size;
                     string name, typeStroke;
 
@@ -217,7 +216,6 @@ namespace Paint
                         p2.Y = br.ReadDouble();
                         size = br.ReadInt32();
                         color = (Color)ColorConverter.ConvertFromString(br.ReadString());
-                        colorfill = (Color)ColorConverter.ConvertFromString(br.ReadString());
                         typeStroke = br.ReadString();
 
                         IShapeEntity shape = null;
@@ -226,7 +224,6 @@ namespace Paint
                         shape.HandleEnd(p2);
                         shape.HandleThickness(size);
                         shape.HandleColor(color);
-                        shape.HandleFillColor(colorfill);
                         if (typeStroke == "null")
                         {
                             typeStroke = null;
@@ -382,7 +379,6 @@ namespace Paint
                 }
             }
         }
-
         private void SizeGallery_SelectionChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             foreach (RibbonGalleryItem item in SizeCategory.Items)
@@ -440,6 +436,8 @@ namespace Paint
             Grid.SetZIndex(canvas, 1);
             Grid.SetZIndex(border, 0);
         }
+        
+
         private void border_MouseDown(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
