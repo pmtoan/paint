@@ -27,6 +27,7 @@ namespace Paint
         // State
         bool _isDrawing = false;
         bool _drawShape = false;
+        int _sizeCanvas = 100;
 
         string _currentType = "";
         int _currentThickness = 1;
@@ -472,6 +473,5 @@ namespace Paint
                 }
             }
         }
-
     }
 }

@@ -26,6 +26,8 @@
     <None Remove="images\redo.png" />
     <None Remove="images\text.png" />
     <None Remove="images\undo.png" />
+    <None Remove="images\zoomin.png" />
+    <None Remove="images\zoomout.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -93,6 +95,8 @@
     <Resource Include="images\undo.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="images\zoomin.png" />
+    <Resource Include="images\zoomout.png" />
   </ItemGroup>
 
 </Project>

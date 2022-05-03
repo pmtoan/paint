@@ -20,14 +20,18 @@
             <ribbon:RibbonTab Header="Home">
                 <ribbon:RibbonGroup Header="Clipboard">
                     <ribbon:RibbonButton Margin="5" Label="Paste"  LargeImageSource="./images/paste.png"/>
-                    <ribbon:RibbonButton Margin="5" Label="Cut" SmallImageSource="./images/cut.png"/>
-                    <ribbon:RibbonButton Margin="5" Label="Copy" SmallImageSource="./images/copy.png"/>
+                    <ribbon:RibbonButton Margin="5" Label=" Cut" SmallImageSource="./images/cut.png"/>
+                    <ribbon:RibbonButton Margin="5" Label=" Copy" SmallImageSource="./images/copy.png"/>
+                </ribbon:RibbonGroup>
+                <ribbon:RibbonGroup Header="Canvas">
+                    <ribbon:RibbonButton Name="zoomInButton" Click="zoomInButton_Click" Margin="5" Label=" Zoom In" SmallImageSource="./images/zoomin.png"/>
+                    <ribbon:RibbonButton Name="zoomOutButton" Click="zoomOutButton_Click" Margin="5" Label=" Zoom Out" SmallImageSource="./images/zoomout.png"/>
                 </ribbon:RibbonGroup>
                 <ribbon:RibbonGroup Header="File">
-                    <ribbon:RibbonButton x:Name="saveButton" Click="saveButton_Click" Margin="5" Label="Save"  SmallImageSource="./images/save.png"/>
-                    <ribbon:RibbonButton x:Name="openButton" Click="openButton_Click" Margin="5" Label="Open"  SmallImageSource="./images/folder.png"/>
-                    <ribbon:RibbonButton x:Name="exportButton" Click="exportButton_Click" Margin="5" Label="Export" SmallImageSource="./images/picture.png"/>
-                    <ribbon:RibbonButton x:Name="importButton" Click="importButton_Click" Margin="5" Label="Import" SmallImageSource="./images/import.png"/>
+                    <ribbon:RibbonButton x:Name="saveButton" Click="saveButton_Click" Margin="5" Label=" Save"  SmallImageSource="./images/save.png"/>
+                    <ribbon:RibbonButton x:Name="openButton" Click="openButton_Click" Margin="5" Label=" Open"  SmallImageSource="./images/folder.png"/>
+                    <ribbon:RibbonButton x:Name="exportButton" Click="exportButton_Click" Margin="5" Label=" Export" SmallImageSource="./images/picture.png"/>
+                    <ribbon:RibbonButton x:Name="importButton" Click="importButton_Click" Margin="5" Label=" Import" SmallImageSource="./images/import.png"/>
                 </ribbon:RibbonGroup>
                 <ribbon:RibbonGroup Header="Tool">
                     <StackPanel Orientation="Horizontal">
@@ -169,10 +173,11 @@
         </ribbon:Ribbon>
 
         <DockPanel LastChildFill="True">
-            <Grid>
-                <Canvas x:Name="canvas" Background="White" Focusable="False" >
-                  
-                </Canvas>
+            <Grid Background="Gray">
+                <Viewbox Stretch="Fill">
+                    <Canvas x:Name="canvas" Background="White" Focusable="False"  Width="300" Height="300">
+                    </Canvas>
+                </Viewbox>
                 <Border x:Name="border" Background="Transparent" MouseDown="border_MouseDown" MouseMove="border_MouseMove" MouseUp="border_MouseUp"/>
             </Grid>
         </DockPanel>
