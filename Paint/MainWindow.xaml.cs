@@ -37,15 +37,15 @@ namespace Paint
         List<IShapeEntity> _drawnShapes = new List<IShapeEntity>();
         List<IShapeEntity> _stackUndoShape = new List<IShapeEntity>();
 
-        // Cấu hình
-        Dictionary<string, IPaintBusiness> _painterPrototypes = new Dictionary<string, IPaintBusiness>();
-        Dictionary<string, IShapeEntity> _shapesPrototypes = new Dictionary<string, IShapeEntity>();
-
         List<Canvas> imageImport = new List<Canvas>();
         List<BitmapImage> bitmapImageImport = new List<BitmapImage>();
 
         List<Canvas> undoImage = new List<Canvas>();
         List<BitmapImage> undoBitmapImage = new List<BitmapImage>();
+
+        // Cấu hình
+        Dictionary<string, IPaintBusiness> _painterPrototypes = new Dictionary<string, IPaintBusiness>();
+        Dictionary<string, IShapeEntity> _shapesPrototypes = new Dictionary<string, IShapeEntity>();
 
         class PluginItems
         {
@@ -123,10 +123,9 @@ namespace Paint
                 {
                     if (item != null)
                     {
-                        IPaintBusiness painter = _painterPrototypes[item.Name];
                         string strokeString = "";
-                        DoubleCollection list = painter.StrokeType(item);
-                        if (painter.StrokeType(item).Count != 0)
+                        DoubleCollection list = item.GetStrokeType();
+                        if (item.GetStrokeType().Count != 0)
                         {
                             for (int i = 0; i < list.Count; i++)
                             {
@@ -141,13 +140,13 @@ namespace Paint
 
                         br.Write("shape");
                         br.Write(item.Name);
-                        br.Write(painter.PositionX1(item));
-                        br.Write(painter.PositionY1(item));
-                        br.Write(painter.PositionX2(item));
-                        br.Write(painter.PositionY2(item));
-                        br.Write(painter.Thickness(item));
-                        br.Write(painter.Color(item));
-                        br.Write(painter.FillColor(item));
+                        br.Write(item.GetTopLeft().X);
+                        br.Write(item.GetTopLeft().Y);
+                        br.Write(item.GetRightBottom().X);
+                        br.Write(item.GetRightBottom().Y);
+                        br.Write(item.GetThickness());
+                        br.Write(item.GetStrokeColor().ToString());
+                        br.Write(item.GetFillColor().ToString());
                         br.Write(strokeString.Trim());
                     }
                     else if(item == null)
@@ -169,6 +168,22 @@ namespace Paint
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == true)
             {
+                _isDrawing = false;
+                _drawMode = false;
+                _finishShape = false;
+
+                _currentType = "";
+
+                _drawnShapes = new List<IShapeEntity>();
+                _stackUndoShape = new List<IShapeEntity>();
+                imageImport = new List<Canvas>();
+                bitmapImageImport = new List<BitmapImage>();
+
+                undoImage = new List<Canvas>();
+                undoBitmapImage = new List<BitmapImage>();
+                canvas.Children.Clear();
+
+
                 FileStream fs = new FileStream(openFileDialog.FileName, FileMode.Open, FileAccess.Read);
                 BinaryReader br = new BinaryReader(fs);
                 _drawnShapes.Clear();
@@ -178,12 +193,13 @@ namespace Paint
 
                     //Biến cho Shape
                     Point p1, p2;
-                    Color color, fillcolor;
+                    Color strokeColor, fillColor;
                     int size;
                     string name, typeStroke;
 
                     //Biến cho Image
                     string widthImage, heightImage, imageBrush;
+
                     if (typeCanvas == "shape")
                     {
                         name = br.ReadString();
@@ -192,8 +208,8 @@ namespace Paint
                         p2.X = br.ReadDouble();
                         p2.Y = br.ReadDouble();
                         size = br.ReadInt32();
-                        color = (Color)ColorConverter.ConvertFromString(br.ReadString());
-                        fillcolor = (Color)ColorConverter.ConvertFromString(br.ReadString());
+                        strokeColor = (Color)ColorConverter.ConvertFromString(br.ReadString());
+                        fillColor = (Color)ColorConverter.ConvertFromString(br.ReadString());
                         typeStroke = br.ReadString();
 
                         IShapeEntity shape = null;
@@ -201,8 +217,8 @@ namespace Paint
                         shape.HandleStart(p1);
                         shape.HandleEnd(p2);
                         shape.HandleThickness(size);
-                        shape.HandleColor(color);
-                        shape.HandleFillColor(fillcolor);
+                        shape.HandleStrokeColor(strokeColor);
+                        shape.HandleFillColor(fillColor );
                         if (typeStroke == "null")
                         {
                             typeStroke = null;
@@ -231,8 +247,9 @@ namespace Paint
                         bitmapImageImport.Add(theImage);
                     }
                 }
+
                 int _count = 0;
-                canvas.Children.Clear();
+                
                 foreach (var item in _drawnShapes)
                 {
                     if (item == null && imageImport[_count] != null)
@@ -324,7 +341,7 @@ namespace Paint
 
         private void undoButton_Click(object sender, RoutedEventArgs e)
         {
-            if (_drawnShapes.Count >= 1)
+            if (_drawnShapes.Count > 0 && canvas.Children.Count > 0)
             {
                 if (_drawnShapes[_drawnShapes.Count - 1] == null)
                 {
@@ -386,7 +403,7 @@ namespace Paint
                 _currentStrokeColor = (Color)StrokeColor.SelectedColor;
                 if (_preview != null)
                 {
-                    _preview.HandleColor(_currentStrokeColor);
+                    _preview.HandleStrokeColor(_currentStrokeColor);
                 }
             }
         }
@@ -407,7 +424,7 @@ namespace Paint
             {
                 if (item.IsSelected)
                 {
-                    _currentStrokeType = item.Tag as string;
+                    _currentStrokeType = (string)item.Tag;
                     if (_preview != null)
                     {
                         _preview.HandleStrokeType(_currentStrokeType);
@@ -435,7 +452,8 @@ namespace Paint
                     _currentType = entity!.Name;
 
                     _preview = (_shapesPrototypes[_currentType].Clone() as IShapeEntity)!;
-                    _preview.HandleColor(_currentStrokeColor);
+                    _preview.HandleStrokeColor(_currentStrokeColor);
+                    _preview.HandleFillColor(_currentFillColor);
                     _preview.HandleThickness(_currentThickness);
                     _preview.HandleStrokeType(_currentStrokeType);
 

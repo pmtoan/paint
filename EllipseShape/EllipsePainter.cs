@@ -50,7 +50,7 @@ namespace EllipseShape
                 Width = Math.Abs(width),
                 Height = Math.Abs(height),
                 StrokeThickness = ellipse.Size,
-                Stroke = new SolidColorBrush(ellipse.ColorApply),
+                Stroke = new SolidColorBrush(ellipse.ColorStroke),
                 Fill = new SolidColorBrush(ellipse.ColorFill),
                 StrokeDashArray = ellipse.StrokeType
             };
@@ -58,49 +58,6 @@ namespace EllipseShape
             Canvas.SetTop(element, ellipse.TopLeft.Y);
 
             return element;
-        }
-        public double PositionX1(IShapeEntity shape)
-        {
-            var ellipse = shape as EllipseEntity;
-            return ellipse.MousePoint.X;
-        }
-        public double PositionY1(IShapeEntity shape)
-        {
-            var ellipse = shape as EllipseEntity;
-            return ellipse.MousePoint.Y;
-        }
-        public double PositionX2(IShapeEntity shape)
-        {
-            var ellipse = shape as EllipseEntity;
-            return ellipse.AnchorPoint.X;
-        }
-        public double PositionY2(IShapeEntity shape)
-        {
-            var ellipse = shape as EllipseEntity;
-            return ellipse.AnchorPoint.Y;
-        }
-
-        public int Thickness(IShapeEntity shape)
-        {
-            var ellipse = shape as EllipseEntity;
-            return ellipse.Size;
-        }
-
-        public string Color(IShapeEntity shape)
-        {
-            var ellipse = shape as EllipseEntity;
-            return ellipse.ColorApply.ToString();
-        }
-
-        public DoubleCollection StrokeType(IShapeEntity shape)
-        {
-            var ellipse = shape as EllipseEntity;
-            return ellipse.StrokeType;
-        }
-
-        public string FillColor(IShapeEntity shape)
-        {
-            throw new NotImplementedException();
         }
     }
 }

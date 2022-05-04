@@ -8,14 +8,20 @@ namespace IContract
     public interface IShapeEntity : ICloneable
     {
         string Name { get; }
-        BitmapImage Icon { get; }
 
         void HandleStart(Point point);
         void HandleEnd(Point point);
         void HandleThickness(int size);
-        void HandleColor(Color color);
         void HandleStrokeType(string type);
+        void HandleStrokeColor(Color color);
         void HandleFillColor(Color color);
+
+        Point GetTopLeft();
+        Point GetRightBottom();
+        int GetThickness();
+        Color GetStrokeColor();
+        Color GetFillColor();
+        DoubleCollection GetStrokeType();
 
     }
 }

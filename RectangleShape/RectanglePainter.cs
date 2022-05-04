@@ -62,49 +62,5 @@ namespace RectangleShape
 
             return element;
         }
-        public double PositionX1(IShapeEntity shape)
-        {
-            var rectangle = shape as RectangleEntity;
-            return rectangle.MousePoint.X;
-        }
-        public double PositionY1(IShapeEntity shape)
-        {
-            var rectangle = shape as RectangleEntity;
-            return rectangle.MousePoint.Y;
-        }
-        public double PositionX2(IShapeEntity shape)
-        {
-            var rectangle = shape as RectangleEntity;
-            return rectangle.AnchorPoint.X;
-        }
-        public double PositionY2(IShapeEntity shape)
-        {
-            var rectangle = shape as RectangleEntity;
-            return rectangle.AnchorPoint.Y;
-        }
-
-        public int Thickness(IShapeEntity shape)
-        {
-            var rectangle = shape as RectangleEntity;
-            return rectangle.Size;
-        }
-
-        public string Color(IShapeEntity shape)
-        {
-            var rectangle = shape as RectangleEntity;
-            return rectangle.ColorStroke.ToString();
-        }
-
-        public DoubleCollection StrokeType(IShapeEntity shape)
-        {
-            var rectangle = shape as RectangleEntity;
-            return rectangle.StrokeType;
-        }
-
-        public string FillColor(IShapeEntity shape)
-        {
-            var rectangle = shape as RectangleEntity;
-            return rectangle.ColorFill.ToString();
-        }
     }
 }

@@ -13,12 +13,10 @@ namespace EllipseShape
         public Point MousePoint { get; set; }
         public int Size { get; set; }
         public DoubleCollection StrokeType { get; set; }
-        public Color ColorApply { get; set; }
+        public Color ColorStroke { get; set; }
         public Color ColorFill { get; set; }
 
         public string Name => "Ellipse";
-
-        public BitmapImage Icon => new BitmapImage(new Uri("", UriKind.Relative));
 
         public void HandleStart(Point point)
         {
@@ -33,9 +31,9 @@ namespace EllipseShape
             Size = size;
         }
 
-        public void HandleColor(Color color)
+        public void HandleStrokeColor(Color color)
         {
-            ColorApply = color;
+            ColorStroke = color;
         }
 
         public void HandleFillColor(Color color)
@@ -45,23 +43,48 @@ namespace EllipseShape
 
         public void HandleStrokeType(string type)
         {
+            StrokeType = new DoubleCollection();
             if (type != null)
             {
-                var strokeDashArray = new DoubleCollection();
                 foreach (string s in type.Split(" "))
                 {
-                    strokeDashArray.Add(Convert.ToDouble(s));
+                    StrokeType.Add(Convert.ToDouble(s));
                 }
-                StrokeType = strokeDashArray;
-            }
-            else
-            {
-                StrokeType = new DoubleCollection();
             }
         }
         public object Clone()
         {
             return MemberwiseClone();
+        }
+
+        public Point GetTopLeft()
+        {
+            return TopLeft;
+        }
+
+        public Point GetRightBottom()
+        {
+            return MousePoint;
+        }
+
+        public int GetThickness()
+        {
+            return Size;
+        }
+
+        public Color GetStrokeColor()
+        {
+            return ColorStroke;
+        }
+
+        public Color GetFillColor()
+        {
+            return ColorFill;
+        }
+
+        public DoubleCollection GetStrokeType()
+        {
+            return StrokeType;
         }
     }
 }

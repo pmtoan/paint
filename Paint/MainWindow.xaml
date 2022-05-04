@@ -60,7 +60,7 @@
                             <ribbon:RibbonControlGroup.ItemTemplate>
                                 <DataTemplate>
                                     <ribbon:RibbonRadioButton  SmallImageSource="{Binding PluginIconPath}"
-                                                  Click="chooseShapeBtnClick" 
+                                                  Click="chooseShapeBtnClick"  GroupName="shapeBtn"
                                                   Tag="{Binding PluginEntity}"  Width="25" Height="25" />
                                 </DataTemplate>
                             </ribbon:RibbonControlGroup.ItemTemplate>

@@ -11,11 +11,9 @@ namespace LineShape
         public Point Start { get; set; }
         public Point End { get; set; }
         public int Size { get; set; }
-        public Color ColorApply { get; set; }
+        public Color ColorStroke { get; set; }
         public DoubleCollection StrokeType { get; set; }
         public string Name => "Line";
-        public BitmapImage Icon => new BitmapImage(new Uri("", UriKind.Relative));
-
 
         public void HandleStart(Point point)
         {
@@ -31,25 +29,26 @@ namespace LineShape
             Size = size;
         }
 
-        public void HandleColor(Color color)
+        public void HandleStrokeColor(Color color)
         {
-            ColorApply = color;
+            ColorStroke = color;
+        }
+
+
+        public void HandleFillColor(Color color)
+        {
+            return;
         }
 
         public void HandleStrokeType(string type)
         {
+            StrokeType = new DoubleCollection();
             if (type != null)
             {
-                var strokeDashArray = new DoubleCollection();
                 foreach (string s in type.Split(" "))
                 {
-                    strokeDashArray.Add(Convert.ToDouble(s));
+                    StrokeType.Add(Convert.ToDouble(s));
                 }
-                StrokeType = strokeDashArray;
-            }
-            else
-            {
-                StrokeType = new DoubleCollection();
             }
         }
 
@@ -58,8 +57,34 @@ namespace LineShape
             return MemberwiseClone();
         }
 
-        public void HandleFillColor(Color color)
+        public Point GetTopLeft()
         {
+            return Start;
+        }
+
+        public Point GetRightBottom()
+        {
+            return End;
+        }
+
+        public int GetThickness()
+        {
+            return Size;
+        }
+
+        public Color GetStrokeColor()
+        {
+            return ColorStroke;
+        }
+
+        public Color GetFillColor()
+        {
+            return new Color();
+        }
+
+        public DoubleCollection GetStrokeType()
+        {
+            return StrokeType;
         }
     }
 }
