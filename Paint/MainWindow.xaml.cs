@@ -32,6 +32,7 @@ namespace Paint
         Color _currentFillColor = Colors.Transparent;
         string _currentStrokeType = null;
         IShapeEntity _preview = null;
+        IShapeEntity _prevShape = null;
 
         Point _start;
         List<IShapeEntity> _drawnShapes = new List<IShapeEntity>();
@@ -338,7 +339,6 @@ namespace Paint
 
             e.Handled = true;
         }
-
         private void undoButton_Click(object sender, RoutedEventArgs e)
         {
             if (_drawnShapes.Count > 0 && canvas.Children.Count > 0)
@@ -432,33 +432,40 @@ namespace Paint
                 }
             }
         }
-
         private void eraserButton_Click(object sender, RoutedEventArgs e)
         {
             _drawMode = false;
             Grid.SetZIndex(canvas, 1);
             Grid.SetZIndex(border, 0);
         }
-
         private void chooseShapeBtnClick(object sender, RoutedEventArgs e)
         {
             var button = sender as RibbonRadioButton;
             var entity = button.Tag as IShapeEntity;
-            if (entity != null)
+            if (_prevShape == entity)
             {
-                if (_currentType != entity.Name || _currentType == "")
+                _drawMode = !_drawMode;
+                button.IsChecked = !button.IsChecked;
+            }
+            else
+            {
+                if (entity != null)
                 {
-                    _drawMode = true;
-                    _currentType = entity!.Name;
+                    if (_currentType != entity.Name || _currentType == "")
+                    {
+                        _drawMode = true;
+                        _currentType = entity!.Name;
 
-                    _preview = (_shapesPrototypes[_currentType].Clone() as IShapeEntity)!;
-                    _preview.HandleStrokeColor(_currentStrokeColor);
-                    _preview.HandleFillColor(_currentFillColor);
-                    _preview.HandleThickness(_currentThickness);
-                    _preview.HandleStrokeType(_currentStrokeType);
+                        _preview = (_shapesPrototypes[_currentType].Clone() as IShapeEntity)!;
+                        _preview.HandleStrokeColor(_currentStrokeColor);
+                        _preview.HandleFillColor(_currentFillColor);
+                        _preview.HandleThickness(_currentThickness);
+                        _preview.HandleStrokeType(_currentStrokeType);
 
-                    Grid.SetZIndex(canvas, 0);
-                    Grid.SetZIndex(border, 1);
+                        Grid.SetZIndex(canvas, 0);
+                        Grid.SetZIndex(border, 1);
+                    }
+                    _prevShape = entity;
                 }
             }
         }

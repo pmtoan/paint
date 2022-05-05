@@ -32,7 +32,7 @@
                     <ribbon:RibbonButton Margin="5" Label=" Cut" SmallImageSource="./images/cut.png"/>
                     <ribbon:RibbonButton Margin="5" Label=" Copy" SmallImageSource="./images/copy.png"/>
                 </ribbon:RibbonGroup>
-				
+
                 <ribbon:RibbonGroup Header="Canvas">
                     <ribbon:RibbonButton Name="zoomInButton" Click="zoomInButton_Click" Margin="5" Label=" Zoom In" SmallImageSource="./images/zoomin.png"/>
                     <ribbon:RibbonButton Name="zoomOutButton" Click="zoomOutButton_Click" Margin="5" Label=" Zoom Out" SmallImageSource="./images/zoomout.png"/>
