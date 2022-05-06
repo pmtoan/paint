@@ -13,6 +13,8 @@ namespace EllipseShape
         {
             var ellipse = shape as EllipseEntity;
 
+            // TODO: chú ý việc đảo lại rightbottom và topleft 
+
             double width = ellipse.MousePoint.X - ellipse.AnchorPoint.X;
             double height = ellipse.MousePoint.Y - ellipse.AnchorPoint.Y;
 
@@ -21,28 +23,35 @@ namespace EllipseShape
                 // Nomrmal case
                 // Topleft is Anchor
 
-                ellipse.TopLeft = ellipse.AnchorPoint;
+                ellipse.LeftTop = ellipse.AnchorPoint;
+                ellipse.RightBottom = ellipse.MousePoint;
             }
             else if (height < 0 && width < 0)
             {
                 // TopLeft is MousePoint
 
-                ellipse.TopLeft = ellipse.MousePoint;
+                ellipse.LeftTop = ellipse.MousePoint;
+                ellipse.RightBottom = ellipse.AnchorPoint;
             }
             else if (height < 0 && width >= 0)
             {
                 // Topleft.X is Anchor.X
                 // Topleft.Y is MousePoint.Y
 
-                ellipse.TopLeft =
+                ellipse.LeftTop =
                     new Point(ellipse.AnchorPoint.X, ellipse.MousePoint.Y);
+                ellipse.RightBottom =
+                    new Point(ellipse.MousePoint.X, ellipse.AnchorPoint.Y);
             }
             else if (height >= 0 && width < 0)
             {
                 // Topleft.X is MousePoint.X
                 // Topleft.Y is Anchor.Y
-                ellipse.TopLeft =
+
+                ellipse.LeftTop =
                     new Point(ellipse.MousePoint.X, ellipse.AnchorPoint.Y);
+                ellipse.RightBottom =
+                    new Point(ellipse.AnchorPoint.X, ellipse.MousePoint.Y);
             }
 
             var element = new Ellipse()
@@ -54,8 +63,10 @@ namespace EllipseShape
                 Fill = new SolidColorBrush(ellipse.ColorFill),
                 StrokeDashArray = ellipse.StrokeType
             };
-            Canvas.SetLeft(element, ellipse.TopLeft.X);
-            Canvas.SetTop(element, ellipse.TopLeft.Y);
+            Canvas.SetLeft(element, ellipse.GetLeftTop().X);
+            Canvas.SetTop(element, ellipse.GetLeftTop().Y);
+            Canvas.SetRight(element, ellipse.GetRightBottom().X);
+            Canvas.SetBottom(element, ellipse.GetRightBottom().Y);
 
             return element;
         }

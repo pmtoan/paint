@@ -9,8 +9,9 @@ namespace EllipseShape
     public class EllipseEntity : IShapeEntity
     {
         public Point AnchorPoint { get; set; }
-        public Point TopLeft { get; set; }
         public Point MousePoint { get; set; }
+        public Point LeftTop { get; set; }
+        public Point RightBottom { get; set; }
         public int Size { get; set; }
         public DoubleCollection StrokeType { get; set; }
         public Color ColorStroke { get; set; }
@@ -57,14 +58,14 @@ namespace EllipseShape
             return MemberwiseClone();
         }
 
-        public Point GetTopLeft()
+        public Point GetLeftTop()
         {
-            return TopLeft;
+            return LeftTop;
         }
 
         public Point GetRightBottom()
         {
-            return MousePoint;
+            return RightBottom;
         }
 
         public int GetThickness()

@@ -57,7 +57,7 @@ namespace LineShape
             return MemberwiseClone();
         }
 
-        public Point GetTopLeft()
+        public Point GetLeftTop()
         {
             return Start;
         }

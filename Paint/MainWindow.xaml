@@ -1,4 +1,4 @@
-﻿<Window
+﻿ <Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -45,12 +45,12 @@
 
                 <ribbon:RibbonGroup Header="Tool">
                     <StackPanel Orientation="Horizontal">
-                        <ribbon:RibbonButton Margin="5" SmallImageSource="./images/cursor.png" Click="cursorButton_Click" />
-                        <ribbon:RibbonButton Margin="5" SmallImageSource="./images/pencil.png"/>
-                        <ribbon:RibbonButton Margin="5" SmallImageSource="./images/fill.png" Click="fillButton_Click"/>
+                        <ribbon:RibbonRadioButton GroupName="radioButton" Margin="5" SmallImageSource="./images/cursor.png" Click="cursorButton_Click" />
+                        <ribbon:RibbonRadioButton GroupName="radioButton" Margin="5" SmallImageSource="./images/pencil.png"/>
+                        <ribbon:RibbonRadioButton GroupName="radioButton" Margin="5" SmallImageSource="./images/fill.png" Click="fillButton_Click"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <ribbon:RibbonButton Name="eraserButton" Click="eraserButton_Click" Margin="5" SmallImageSource="./images/eraser.png"/>
+                        <ribbon:RibbonRadioButton GroupName="radioButton" Name="eraserButton" Click="eraserButton_Click" Margin="5" SmallImageSource="./images/eraser.png"/>
                     </StackPanel>
                 </ribbon:RibbonGroup>
 
@@ -65,7 +65,7 @@
                             <ribbon:RibbonControlGroup.ItemTemplate>
                                 <DataTemplate>
                                     <ribbon:RibbonRadioButton  SmallImageSource="{Binding PluginIconPath}"
-                                                  Click="chooseShapeBtnClick"  GroupName="shapeBtn"
+                                                  Click="chooseShapeBtnClick"  GroupName="radioButton"
                                                   Tag="{Binding PluginEntity}"  Width="25" Height="25" />
                                 </DataTemplate>
                             </ribbon:RibbonControlGroup.ItemTemplate>
@@ -184,13 +184,6 @@
             <Viewbox Stretch="Fill">
                 <Grid Background="Gray">
                     <Canvas x:Name="canvas" Background="White" Focusable="False" MouseDown="canvas_MouseDown" PreviewMouseMove="canvas_MouseMove" MouseUp="canvas_MouseUp" Width="800" Height="800">
-                        <Border  BorderBrush="CadetBlue" 
-                                    BorderThickness="1" 
-                                    Canvas.Left="50" Canvas.Top="50"
-                                    Padding="1">
-
-                            <Ellipse Canvas.Left="50" Canvas.Top="50" Width="100" Height="100" StrokeThickness="3" Stroke="Yellow" />
-                        </Border>
                         
                     </Canvas>
                     <Border Name="border" Width="800" Height="800" Background="Transparent" MouseDown="border_MouseDown" MouseMove="border_MouseMove" MouseUp="border_MouseUp"/>

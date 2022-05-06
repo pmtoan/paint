@@ -16,7 +16,7 @@ namespace IContract
         void HandleStrokeColor(Color color);
         void HandleFillColor(Color color);
 
-        Point GetTopLeft();
+        Point GetLeftTop();
         Point GetRightBottom();
         int GetThickness();
         Color GetStrokeColor();

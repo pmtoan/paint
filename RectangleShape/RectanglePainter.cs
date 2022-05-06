@@ -23,29 +23,35 @@ namespace RectangleShape
                 // Nomrmal case
                 // Topleft is Anchor
 
-                rectangle.TopLeft = rectangle.AnchorPoint;
+                rectangle.LeftTop = rectangle.AnchorPoint;
+                rectangle.RightBottom = rectangle.MousePoint;
             }
             else if (height < 0 && width < 0)
             {
                 // TopLeft is MousePoint
 
-                rectangle.TopLeft = rectangle.MousePoint;
+                rectangle.LeftTop = rectangle.MousePoint;
+                rectangle.RightBottom = rectangle.AnchorPoint;
             }
             else if (height < 0 && width >= 0)
             {
                 // Topleft.X is Anchor.X
                 // Topleft.Y is MousePoint.Y
 
-                rectangle.TopLeft =
+                rectangle.LeftTop =
                     new Point(rectangle.AnchorPoint.X, rectangle.MousePoint.Y);
+                rectangle.RightBottom =
+                    new Point(rectangle.MousePoint.X, rectangle.AnchorPoint.Y);
             }
             else if (height >= 0 && width < 0)
             {
                 // Topleft.X is MousePoint.X
                 // Topleft.Y is Anchor.Y
 
-                rectangle.TopLeft =
+                rectangle.LeftTop =
                     new Point(rectangle.MousePoint.X, rectangle.AnchorPoint.Y);
+                rectangle.RightBottom =
+                    new Point(rectangle.AnchorPoint.X, rectangle.MousePoint.Y);
             }
 
             var element = new Rectangle()
@@ -57,8 +63,10 @@ namespace RectangleShape
                 Fill = new SolidColorBrush(rectangle.ColorFill),
                 StrokeDashArray = rectangle.StrokeType
             };
-            Canvas.SetLeft(element, rectangle.TopLeft.X);
-            Canvas.SetTop(element, rectangle.TopLeft.Y);
+            Canvas.SetLeft(element, rectangle.GetLeftTop().X);
+            Canvas.SetTop(element, rectangle.GetLeftTop().Y);
+            Canvas.SetRight(element, rectangle.GetRightBottom().X);
+            Canvas.SetBottom(element, rectangle.GetRightBottom().Y);
 
             return element;
         }
