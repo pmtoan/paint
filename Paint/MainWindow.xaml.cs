@@ -466,6 +466,8 @@ namespace Paint
                         _preview.HandleThickness(_currentThickness);
                         _preview.HandleStrokeType(_currentStrokeType);
 
+                        _chosenElementIndex = -1;
+                        _frameChosen = null;
                         Grid.SetZIndex(canvas, 0);
                         Grid.SetZIndex(border, 1);
                     }
