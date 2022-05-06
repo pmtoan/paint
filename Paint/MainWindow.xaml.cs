@@ -501,14 +501,22 @@ namespace Paint
                 
                 _preview.HandleEnd(end);
 
+                int _count = 0;
                 canvas.Children.Clear();
-
                 foreach (var item in _drawnShapes)
                 {
-                    IPaintBusiness painter = _painterPrototypes[item.Name];
-                    UIElement shape = painter.Draw(item);
+                    if (item == null && imageImport[_count] != null)
+                    {
+                        canvas.Children.Add(imageImport[_count]);
+                        _count++;
+                    }
+                    else
+                    {
+                        IPaintBusiness painter = _painterPrototypes[item.Name];
+                        UIElement shape = painter.Draw(item);
 
-                    canvas.Children.Add(shape);
+                        canvas.Children.Add(shape);
+                    }
                 }
 
                 var previewPainter = _painterPrototypes[_preview.Name];
