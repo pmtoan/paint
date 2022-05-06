@@ -34,6 +34,7 @@ namespace Paint
         Color _currentStrokeColor = Colors.Black;
         Color _currentFillColor = Colors.Transparent;
         string _currentStrokeType = null;
+
         IShapeEntity _preview = null;
         IShapeEntity _prevShape = null;
 
@@ -42,7 +43,8 @@ namespace Paint
         Point _offsetLeftTop;
         Point _offsetRightBottom;
 
-        Point _start;
+        IShapeEntity tempStoreShapeEntity = null;
+
         List<IShapeEntity> _drawnShapes = new List<IShapeEntity>();
         List<IShapeEntity> _stackUndoShape = new List<IShapeEntity>();
 
@@ -347,6 +349,7 @@ namespace Paint
 
             e.Handled = true;
         }
+
         private void undoButton_Click(object sender, RoutedEventArgs e)
         {
             if (_drawnShapes.Count > 0 && canvas.Children.Count > 0)
@@ -390,6 +393,7 @@ namespace Paint
                 }
             }
         }
+
         private void SizeGallery_SelectionChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             foreach (RibbonGalleryItem item in SizeCategory.Items)
@@ -487,11 +491,9 @@ namespace Paint
                 _isDrawing = true;
                 _finishShape = false;
 
-                _start = e.GetPosition(canvas);
-                _preview.HandleStart(_start);
+                _preview.HandleStart(e.GetPosition(canvas));
             } 
         }
-
         private void border_MouseMove(object sender, MouseEventArgs e)
 
         {
@@ -521,7 +523,6 @@ namespace Paint
                 this.Cursor = Cursors.Cross;
             }
         }
-
         private void border_MouseUp(object sender, MouseButtonEventArgs e)
         {
             if (_drawMode)
@@ -533,10 +534,26 @@ namespace Paint
 
                 _preview.HandleEnd(end);
 
-                Debug.WriteLine(_preview.GetRightBottom());
-
                 _drawnShapes.Add(_preview.Clone() as IShapeEntity);
             }
+        }
+
+        private void clearChoooseMode()
+        {
+            if (_frameChosen != null && _chosenElementIndex != -1)
+            {
+                canvas.Children.Remove(_frameChosen);
+                _frameChosen.Child = null;
+
+                var painter = _painterPrototypes[_drawnShapes[_chosenElementIndex].Name];
+                var ele = painter.Draw(_drawnShapes[_chosenElementIndex]);
+
+                canvas.Children.Add(ele);
+
+                _chosenElementIndex = -1;
+                _frameChosen = null;
+            }
+
         }
 
         private void canvas_MouseDown(object sender, MouseButtonEventArgs e)
@@ -618,25 +635,6 @@ namespace Paint
                 clearChoooseMode();
             }
         }
-
-        private void clearChoooseMode()
-        {
-            if(_frameChosen != null && _chosenElementIndex != -1)
-            {
-                canvas.Children.Remove(_frameChosen);
-                _frameChosen.Child = null;
-
-                var painter = _painterPrototypes[_drawnShapes[_chosenElementIndex].Name];
-                var ele = painter.Draw(_drawnShapes[_chosenElementIndex]);
-
-                canvas.Children.Add(ele);
-
-                _chosenElementIndex = -1;
-                _frameChosen = null;
-            }
-           
-        }
-
         private void canvas_MouseMove(object sender, MouseEventArgs e)
         {
             if (_isFill)
@@ -658,7 +656,6 @@ namespace Paint
                 Canvas.SetBottom(_frameChosen, bottom);
             }   
         }
-
         private void canvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
             if (_chosenElementIndex == -1 || _frameChosen == null)
@@ -680,6 +677,12 @@ namespace Paint
             _isDrag = false;
         }
 
+        private void Ribbon_MouseMove(object sender, MouseEventArgs e)
+        {
+
+            this.Cursor = Cursors.Arrow;
+        }
+
         private void cursorButton_Click(object sender, RoutedEventArgs e)
         {
             _isChooseObject = true;
@@ -688,13 +691,6 @@ namespace Paint
             Grid.SetZIndex(canvas, 1);
             Grid.SetZIndex(border, 0);
         }
-
-        private void Ribbon_MouseMove(object sender, MouseEventArgs e)
-        {
-
-            this.Cursor = Cursors.Arrow;
-        }
-
         private void fillButton_Click(object sender, RoutedEventArgs e)
         {
             _isFill = true;
@@ -706,10 +702,54 @@ namespace Paint
 
             clearChoooseMode();
         }
-
         private void eraserButton_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void pasteButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (tempStoreShapeEntity != null)
+            {
+                var painter = _painterPrototypes[tempStoreShapeEntity.Name];
+
+                tempStoreShapeEntity.HandleStart(new Point(10, 10));
+                tempStoreShapeEntity.HandleEnd(new Point(
+                  tempStoreShapeEntity.GetRightBottom().X - (tempStoreShapeEntity.GetLeftTop().X - 10),
+                  tempStoreShapeEntity.GetRightBottom().Y - (tempStoreShapeEntity.GetLeftTop().Y - 10)));
+
+                var ele = painter.Draw(tempStoreShapeEntity);
+
+                canvas.Children.Add(ele);
+                _drawnShapes.Add(tempStoreShapeEntity.Clone() as IShapeEntity);
+            }
+        }
+        private void cutButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_chosenElementIndex != -1)
+            {
+                tempStoreShapeEntity = _drawnShapes[_chosenElementIndex].Clone() as IShapeEntity;
+ 
+                foreach(UIElement element in canvas.Children)
+                {
+                    Point LeftTop = new Point(Canvas.GetLeft(element), Canvas.GetTop(element));
+
+
+                    if (LeftTop == tempStoreShapeEntity.GetLeftTop())
+                    {
+                        canvas.Children.Remove(element);
+                    }
+                }
+
+                _drawnShapes.RemoveAt(_chosenElementIndex);
+            }
+        }
+        private void copyButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(_chosenElementIndex != -1)
+            {
+                tempStoreShapeEntity = _drawnShapes[_chosenElementIndex].Clone() as IShapeEntity;
+            }
         }
 
         private void zoomInButton_Click(object sender, RoutedEventArgs e)
@@ -733,29 +773,5 @@ namespace Paint
                 border.Height = border.ActualHeight / 0.8;
             }
         }
-
-        //void onDragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
-        //{
-        //    double yadjust = canvas.Height + e.VerticalChange;
-        //    double xadjust = canvas.Width + e.VerticalChange;
-        //    if (yadjust >= 0 && xadjust >= 0)
-        //    {
-        //        canvas.Width = yadjust;
-        //        canvas.Height = yadjust;
-        //        Canvas.SetLeft(myThumb, Canvas.GetLeft(myThumb) +
-        //                                e.HorizontalChange);
-        //        Canvas.SetTop(myThumb, Canvas.GetTop(myThumb) +
-        //                                e.VerticalChange);
-        //    }
-        //}
-        //void onDragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
-        //{
-        //    myThumb.Background = Brushes.Orange;
-        //}
-        //void onDragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
-        //{
-        //    myThumb.Background = Brushes.Blue;
-        //}
-
     }
 }
