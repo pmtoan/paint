@@ -25,6 +25,7 @@ namespace Paint
         bool _isDrawing = false;
         bool _drawMode = false;
         bool _finishShape = false;
+        bool _isDrag = false;
 
         string _currentType = "";
         int _currentThickness = 1;
@@ -32,6 +33,11 @@ namespace Paint
         Color _currentFillColor = Colors.Transparent;
         string _currentStrokeType = null;
         IShapeEntity _preview = null;
+
+        int _chosenElementIndex = -1;
+        Border _frameChosen = null;
+        Point _offsetLeftTop;
+        Point _offsetRightBottom;
 
         Point _start;
         List<IShapeEntity> _drawnShapes = new List<IShapeEntity>();
@@ -435,9 +441,7 @@ namespace Paint
 
         private void eraserButton_Click(object sender, RoutedEventArgs e)
         {
-            _drawMode = false;
-            Grid.SetZIndex(canvas, 1);
-            Grid.SetZIndex(border, 0);
+
         }
 
         private void chooseShapeBtnClick(object sender, RoutedEventArgs e)
@@ -516,26 +520,125 @@ namespace Paint
         }
         private void canvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            Debug.WriteLine("Canvas mouse down");
+            var canvasControl = sender as Canvas;
+            if (canvasControl == null)
+                return;
 
-            if(e.OriginalSource is UIElement)
+            HitTestResult hitTestResult = VisualTreeHelper.HitTest(canvasControl, e.GetPosition(canvasControl));
+            var element = hitTestResult.VisualHit;
+          
+            // Chỉ xét trường hợp nhấn vào các object trên canvas
+            if (element != null && _shapesPrototypes.ContainsKey(element.GetType().Name))
             {
-                UIElement a = (UIElement)e.OriginalSource;
-                Debug.WriteLine(a.GetType());
-                foreach(UIElement f in canvas.Children)
-                {
-                    if(f.Equals(a))
-                    {
-                        Brush br = new SolidColorBrush(Colors.Yellow);
-                        f.GetType().GetProperty("Fill").SetValue(f, br);
+                double left = Canvas.GetLeft(element as UIElement);
+                double top = Canvas.GetTop(element as UIElement);
 
-                        Debug.WriteLine(canvas.Children.IndexOf(f));
-                        
-                    }
-                 
+                int idx = _drawnShapes.FindIndex(s => s.GetTopLeft().X == left && s.GetTopLeft().Y == top);
+
+                double right = _drawnShapes[idx].GetRightBottom().X;
+                double bottom = _drawnShapes[idx].GetRightBottom().Y;
+
+                if (idx == _chosenElementIndex)
+                {
+                    _isDrag = true;
+
+                    _offsetLeftTop = e.GetPosition(canvas);
+                    _offsetRightBottom = e.GetPosition(canvas);
+
+                    _offsetLeftTop.X -= Canvas.GetLeft(_frameChosen);
+                    _offsetLeftTop.Y -= Canvas.GetTop(_frameChosen);
+
+                    _offsetRightBottom.X = Canvas.GetRight(_frameChosen) - _offsetRightBottom.X;
+                    _offsetRightBottom.Y = Canvas.GetBottom(_frameChosen) - _offsetRightBottom.Y;
+
+                    return;
                 }
+
+                if (idx != _chosenElementIndex && _chosenElementIndex != -1 && _frameChosen != null)
+                {
+                    canvas.Children.Remove(_frameChosen);
+                    _frameChosen.Child = null;
+
+                    var painter = _painterPrototypes[_drawnShapes[_chosenElementIndex].Name];
+                    var ele = painter.Draw(_drawnShapes[_chosenElementIndex]);
+                    canvas.Children.Add(ele); 
+                }
+
+                _chosenElementIndex = idx;
+                canvas.Children.Remove(element as UIElement);
+
+                _frameChosen = new Border();
+                _frameChosen.Child = element as UIElement;
+                _frameChosen.Background = new SolidColorBrush(Colors.GhostWhite);
+                _frameChosen.BorderBrush = Brushes.Gainsboro;
+                _frameChosen.BorderThickness = new Thickness(1);
+                _frameChosen.Padding = new Thickness(2);
+
+                Canvas.SetLeft(_frameChosen, left - 2.5);
+                Canvas.SetTop(_frameChosen, top - 2.5);
+                Canvas.SetRight(_frameChosen, right - 2.5);
+                Canvas.SetBottom(_frameChosen, bottom - 2.5);
+
+                canvas.Children.Add(_frameChosen);
+
                 
             }
+            else if(_chosenElementIndex != -1)
+            {
+                // Xét trường hợp không nhấn vào object nữa mà nhấn ra vùng trắng để bỏ chế độ chọn object
+                canvas.Children.Remove(_frameChosen);
+                _frameChosen.Child = null;
+
+                double top = _drawnShapes[_chosenElementIndex].GetTopLeft().Y;
+                double left = _drawnShapes[_chosenElementIndex].GetTopLeft().X;
+
+                var painter = _painterPrototypes[_drawnShapes[_chosenElementIndex].Name];
+                var ele = painter.Draw(_drawnShapes[_chosenElementIndex]);
+
+                canvas.Children.Add(ele);
+
+                _chosenElementIndex = -1;
+                _frameChosen = null;
+            }
+        }
+
+        private void canvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (_isDrag)
+            {
+                var position = e.GetPosition(canvas);
+
+                var left = position.X - _offsetLeftTop.X;
+                var top = position.Y - _offsetLeftTop.Y > 0 ? position.Y - _offsetLeftTop.Y : 1;
+                var right = position.X + _offsetRightBottom.X;
+                var bottom = position.Y + _offsetRightBottom.Y;
+
+                Canvas.SetLeft(_frameChosen, left);
+                Canvas.SetTop(_frameChosen, top);
+                Canvas.SetRight(_frameChosen, right);
+                Canvas.SetBottom(_frameChosen, bottom);
+            }   
+        }
+
+        private void canvas_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (_chosenElementIndex == -1 || _frameChosen == null)
+                return;
+
+            if (_isDrag)
+            {
+                Point top_left = _drawnShapes[_chosenElementIndex].GetTopLeft();
+                top_left.X = Canvas.GetLeft(_frameChosen) + 2.5;
+                top_left.Y = Canvas.GetTop(_frameChosen) + 2.5;
+
+                Point right_bottom = _drawnShapes[_chosenElementIndex].GetRightBottom();
+                right_bottom.X = Canvas.GetRight(_frameChosen) + 2.5;
+                right_bottom.Y = Canvas.GetBottom(_frameChosen) + 2.5;
+
+                _drawnShapes[_chosenElementIndex].HandleStart(top_left);
+                _drawnShapes[_chosenElementIndex].HandleEnd(right_bottom);
+            }
+            _isDrag = false;
         }
 
         private void zoomInButton_Click(object sender, RoutedEventArgs e)
@@ -559,6 +662,36 @@ namespace Paint
                 border.Height = border.ActualHeight / 0.8;
             }
         }
+
+        private void cursorButton_Click(object sender, RoutedEventArgs e)
+        {
+            _drawMode = false;
+            Grid.SetZIndex(canvas, 1);
+            Grid.SetZIndex(border, 0);
+        }
+
+        //void onDragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
+        //{
+        //    double yadjust = canvas.Height + e.VerticalChange;
+        //    double xadjust = canvas.Width + e.VerticalChange;
+        //    if (yadjust >= 0 && xadjust >= 0)
+        //    {
+        //        canvas.Width = yadjust;
+        //        canvas.Height = yadjust;
+        //        Canvas.SetLeft(myThumb, Canvas.GetLeft(myThumb) +
+        //                                e.HorizontalChange);
+        //        Canvas.SetTop(myThumb, Canvas.GetTop(myThumb) +
+        //                                e.VerticalChange);
+        //    }
+        //}
+        //void onDragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
+        //{
+        //    myThumb.Background = Brushes.Orange;
+        //}
+        //void onDragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        //{
+        //    myThumb.Background = Brushes.Blue;
+        //}
 
     }
 }
