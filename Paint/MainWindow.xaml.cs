@@ -463,6 +463,9 @@ namespace Paint
 
                     Grid.SetZIndex(canvas, 0);
                     Grid.SetZIndex(border, 1);
+
+                    _chosenElementIndex = -1;
+                    _frameChosen = null;
                 }
             }
         }
