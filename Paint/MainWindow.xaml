@@ -9,8 +9,13 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         Title="Paint" Icon="./images/paint.png" Height="800" Width="1000" Loaded="Window_Loaded">
+    <Window.Resources>
+        <ResourceDictionary>
+            <TextBlock x:Key="CursorPaint" Cursor="./images/paint.cur"/>
+        </ResourceDictionary>
+    </Window.Resources>
     <DockPanel LastChildFill="True">
-        <ribbon:Ribbon DockPanel.Dock="Top">
+        <ribbon:Ribbon Name="RibbonBar" DockPanel.Dock="Top" MouseMove="Ribbon_MouseMove">
             <Ribbon.QuickAccessToolBar>
                 <RibbonQuickAccessToolBar>
                     <RibbonSplitButton  x:Name="openButton" Click="openButton_Click" SmallImageSource="./images/folder.png" >
@@ -42,7 +47,7 @@
                     <StackPanel Orientation="Horizontal">
                         <ribbon:RibbonButton Margin="5" SmallImageSource="./images/cursor.png" Click="cursorButton_Click" />
                         <ribbon:RibbonButton Margin="5" SmallImageSource="./images/pencil.png"/>
-                        <ribbon:RibbonButton Margin="5" SmallImageSource="./images/fill.png"/>
+                        <ribbon:RibbonButton Margin="5" SmallImageSource="./images/fill.png" Click="fillButton_Click"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <ribbon:RibbonButton Name="eraserButton" Click="eraserButton_Click" Margin="5" SmallImageSource="./images/eraser.png"/>

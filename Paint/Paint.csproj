@@ -20,6 +20,7 @@
     <None Remove="images\Line-size.png" />
     <None Remove="images\Line.png" />
     <None Remove="images\paint - Shortcut.lnk" />
+    <None Remove="images\paint.cur" />
     <None Remove="images\paint.png" />
     <None Remove="images\paste.png" />
     <None Remove="images\pencil.png" />
@@ -74,6 +75,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="images\paint - Shortcut.lnk">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\paint.cur">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="images\paint.png" />
