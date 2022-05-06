@@ -149,8 +149,8 @@ namespace Paint
 
                         br.Write("shape");
                         br.Write(item.Name);
-                        br.Write(item.GetTopLeft().X);
-                        br.Write(item.GetTopLeft().Y);
+                        br.Write(item.GetLeftTop().X);
+                        br.Write(item.GetLeftTop().Y);
                         br.Write(item.GetRightBottom().X);
                         br.Write(item.GetRightBottom().Y);
                         br.Write(item.GetThickness());
@@ -532,7 +532,9 @@ namespace Paint
                 var end = e.GetPosition(canvas); // Điểm kết thúc
 
                 _preview.HandleEnd(end);
-                
+
+                Debug.WriteLine(_preview.GetRightBottom());
+
                 _drawnShapes.Add(_preview.Clone() as IShapeEntity);
             }
         }
@@ -551,8 +553,14 @@ namespace Paint
             {
                 double left = Canvas.GetLeft(element as UIElement);
                 double top = Canvas.GetTop(element as UIElement);
-
-                int idx = _drawnShapes.FindIndex(s => s.GetTopLeft().X == left && s.GetTopLeft().Y == top);
+                
+                int idx = _drawnShapes.FindIndex(s => s.GetLeftTop().X == left && s.GetLeftTop().Y == top);
+                Debug.WriteLine(element.GetType().Name);
+                Debug.WriteLine(left + ", " + top);
+                Debug.WriteLine(Canvas.GetRight(element as UIElement) + ", " + Canvas.GetBottom(element as UIElement));
+                Debug.WriteLine(_drawnShapes.Count);
+                Debug.WriteLine(_drawnShapes[0].GetLeftTop());
+                Debug.WriteLine(_drawnShapes[0].GetRightBottom());
 
                 double right = _drawnShapes[idx].GetRightBottom().X;
                 double bottom = _drawnShapes[idx].GetRightBottom().Y;
@@ -625,6 +633,12 @@ namespace Paint
                 canvas.Children.Remove(_frameChosen);
                 _frameChosen.Child = null;
 
+<<<<<<< Updated upstream
+=======
+                double top = _drawnShapes[_chosenElementIndex].GetLeftTop().Y;
+                double left = _drawnShapes[_chosenElementIndex].GetLeftTop().X;
+
+>>>>>>> Stashed changes
                 var painter = _painterPrototypes[_drawnShapes[_chosenElementIndex].Name];
                 var ele = painter.Draw(_drawnShapes[_chosenElementIndex]);
 
@@ -665,9 +679,15 @@ namespace Paint
 
             if (_isDrag)
             {
+<<<<<<< Updated upstream
                 Point top_left = _drawnShapes[_chosenElementIndex].GetTopLeft();
                 top_left.X = Canvas.GetLeft(_frameChosen) + 5;
                 top_left.Y = Canvas.GetTop(_frameChosen) + 5;
+=======
+                Point top_left = _drawnShapes[_chosenElementIndex].GetLeftTop();
+                top_left.X = Canvas.GetLeft(_frameChosen) + 2.5;
+                top_left.Y = Canvas.GetTop(_frameChosen) + 2.5;
+>>>>>>> Stashed changes
 
                 Point right_bottom = _drawnShapes[_chosenElementIndex].GetRightBottom();
                 right_bottom.X = Canvas.GetRight(_frameChosen) + 5;

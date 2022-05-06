@@ -45,12 +45,18 @@
 
                 <ribbon:RibbonGroup Header="Tool">
                     <StackPanel Orientation="Horizontal">
+<<<<<<< Updated upstream
                         <ribbon:RibbonButton Margin="5" SmallImageSource="./images/cursor.png" Click="cursorButton_Click" />
                         <ribbon:RibbonButton Margin="5" SmallImageSource="./images/pencil.png"/>
                         <ribbon:RibbonButton Margin="5" SmallImageSource="./images/fill.png" Click="fillButton_Click"/>
+=======
+                        <ribbon:RibbonRadioButton GroupName="radioButton" Margin="5" SmallImageSource="./images/cursor.png" Click="cursorButton_Click" />
+                        <ribbon:RibbonRadioButton GroupName="radioButton" Margin="5" SmallImageSource="./images/pencil.png"/>
+                        <ribbon:RibbonRadioButton GroupName="radioButton" Margin="5" SmallImageSource="./images/fill.png" Click="fillButton_Click"/>
+>>>>>>> Stashed changes
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <ribbon:RibbonButton Name="eraserButton" Click="eraserButton_Click" Margin="5" SmallImageSource="./images/eraser.png"/>
+                        <ribbon:RibbonRadioButton GroupName="radioButton" Name="eraserButton" Click="eraserButton_Click" Margin="5" SmallImageSource="./images/eraser.png"/>
                     </StackPanel>
                 </ribbon:RibbonGroup>
 
@@ -65,7 +71,7 @@
                             <ribbon:RibbonControlGroup.ItemTemplate>
                                 <DataTemplate>
                                     <ribbon:RibbonRadioButton  SmallImageSource="{Binding PluginIconPath}"
-                                                  Click="chooseShapeBtnClick"  GroupName="shapeBtn"
+                                                  Click="chooseShapeBtnClick"  GroupName="radioButton"
                                                   Tag="{Binding PluginEntity}"  Width="25" Height="25" />
                                 </DataTemplate>
                             </ribbon:RibbonControlGroup.ItemTemplate>

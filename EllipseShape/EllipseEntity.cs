@@ -86,5 +86,10 @@ namespace EllipseShape
         {
             return StrokeType;
         }
+
+        public Point GetLeftTop()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
