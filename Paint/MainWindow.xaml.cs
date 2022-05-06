@@ -26,6 +26,8 @@ namespace Paint
         bool _drawMode = false;
         bool _finishShape = false;
         bool _isDrag = false;
+        bool _isChooseObject = false;
+        bool _isFill = false;
 
         string _currentType = "";
         int _currentThickness = 1;
@@ -438,10 +440,7 @@ namespace Paint
                 }
             }
         }
-        private void eraserButton_Click(object sender, RoutedEventArgs e)
-        {
 
-        }
         private void chooseShapeBtnClick(object sender, RoutedEventArgs e)
         {
             var button = sender as RibbonRadioButton;
@@ -468,8 +467,12 @@ namespace Paint
 
                         _chosenElementIndex = -1;
                         _frameChosen = null;
+                        _isChooseObject = false;
+                        _isFill = false;
                         Grid.SetZIndex(canvas, 0);
                         Grid.SetZIndex(border, 1);
+
+                        clearChoooseMode();
                     }
                     _prevShape = entity;
                 }
@@ -492,9 +495,10 @@ namespace Paint
         private void border_MouseMove(object sender, MouseEventArgs e)
 
         {
+            var end = e.GetPosition(canvas);
             if (_drawMode && _isDrawing && !_finishShape)
             {
-                var end = e.GetPosition(canvas);
+                
                 _preview.HandleEnd(end);
 
                 canvas.Children.Clear();
@@ -510,6 +514,11 @@ namespace Paint
                 var previewPainter = _painterPrototypes[_preview.Name];
                 var previewElement = previewPainter.Draw(_preview);
                 canvas.Children.Add(previewElement);
+            }
+
+            if (_drawMode)
+            {
+                this.Cursor = Cursors.Cross;
             }
         }
 
@@ -527,6 +536,7 @@ namespace Paint
                 _drawnShapes.Add(_preview.Clone() as IShapeEntity);
             }
         }
+
         private void canvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
             var canvasControl = sender as Canvas;
@@ -547,7 +557,17 @@ namespace Paint
                 double right = _drawnShapes[idx].GetRightBottom().X;
                 double bottom = _drawnShapes[idx].GetRightBottom().Y;
 
-                if (idx == _chosenElementIndex)
+                if (_isFill)
+                {
+                    Debug.WriteLine(idx);
+                    Brush br = new SolidColorBrush(_currentFillColor);
+                    _drawnShapes[idx].HandleFillColor(_currentFillColor);
+                    element.GetType().GetProperty("Fill").SetValue(element, br);
+
+                    return;
+                }
+
+                if (idx == _chosenElementIndex && _isChooseObject)
                 {
                     _isDrag = true;
 
@@ -563,7 +583,7 @@ namespace Paint
                     return;
                 }
 
-                if (idx != _chosenElementIndex && _chosenElementIndex != -1 && _frameChosen != null)
+                if (idx != _chosenElementIndex && _chosenElementIndex != -1 && _isChooseObject)
                 {
                     canvas.Children.Remove(_frameChosen);
                     _frameChosen.Child = null;
@@ -577,29 +597,33 @@ namespace Paint
                 canvas.Children.Remove(element as UIElement);
 
                 _frameChosen = new Border();
-                _frameChosen.Child = element as UIElement;
-                _frameChosen.Background = new SolidColorBrush(Colors.GhostWhite);
-                _frameChosen.BorderBrush = Brushes.Gainsboro;
-                _frameChosen.BorderThickness = new Thickness(1);
+                _frameChosen.BorderBrush = Brushes.SkyBlue;
+                _frameChosen.BorderThickness = new Thickness(3);
                 _frameChosen.Padding = new Thickness(2);
+                _frameChosen.Child = element as UIElement;
 
-                Canvas.SetLeft(_frameChosen, left - 2.5);
-                Canvas.SetTop(_frameChosen, top - 2.5);
-                Canvas.SetRight(_frameChosen, right - 2.5);
-                Canvas.SetBottom(_frameChosen, bottom - 2.5);
+                Canvas.SetLeft(_frameChosen, left - 5);
+                Canvas.SetTop(_frameChosen, top - 5);
+                Canvas.SetRight(_frameChosen, right - 5);
+                Canvas.SetBottom(_frameChosen, bottom - 5);
 
                 canvas.Children.Add(_frameChosen);
 
                 
             }
-            else if(_chosenElementIndex != -1)
+            else
             {
                 // Xét trường hợp không nhấn vào object nữa mà nhấn ra vùng trắng để bỏ chế độ chọn object
+                clearChoooseMode();
+            }
+        }
+
+        private void clearChoooseMode()
+        {
+            if(_frameChosen != null && _chosenElementIndex != -1)
+            {
                 canvas.Children.Remove(_frameChosen);
                 _frameChosen.Child = null;
-
-                double top = _drawnShapes[_chosenElementIndex].GetTopLeft().Y;
-                double left = _drawnShapes[_chosenElementIndex].GetTopLeft().X;
 
                 var painter = _painterPrototypes[_drawnShapes[_chosenElementIndex].Name];
                 var ele = painter.Draw(_drawnShapes[_chosenElementIndex]);
@@ -609,10 +633,15 @@ namespace Paint
                 _chosenElementIndex = -1;
                 _frameChosen = null;
             }
+           
         }
 
         private void canvas_MouseMove(object sender, MouseEventArgs e)
         {
+            if (_isFill)
+            {
+                this.Cursor = ((TextBlock)this.Resources["CursorPaint"]).Cursor;
+            }
             if (_isDrag)
             {
                 var position = e.GetPosition(canvas);
@@ -637,17 +666,49 @@ namespace Paint
             if (_isDrag)
             {
                 Point top_left = _drawnShapes[_chosenElementIndex].GetTopLeft();
-                top_left.X = Canvas.GetLeft(_frameChosen) + 2.5;
-                top_left.Y = Canvas.GetTop(_frameChosen) + 2.5;
+                top_left.X = Canvas.GetLeft(_frameChosen) + 5;
+                top_left.Y = Canvas.GetTop(_frameChosen) + 5;
 
                 Point right_bottom = _drawnShapes[_chosenElementIndex].GetRightBottom();
-                right_bottom.X = Canvas.GetRight(_frameChosen) + 2.5;
-                right_bottom.Y = Canvas.GetBottom(_frameChosen) + 2.5;
+                right_bottom.X = Canvas.GetRight(_frameChosen) + 5;
+                right_bottom.Y = Canvas.GetBottom(_frameChosen) + 5;
 
                 _drawnShapes[_chosenElementIndex].HandleStart(top_left);
                 _drawnShapes[_chosenElementIndex].HandleEnd(right_bottom);
             }
             _isDrag = false;
+        }
+
+        private void cursorButton_Click(object sender, RoutedEventArgs e)
+        {
+            _isChooseObject = true;
+            _drawMode = false;
+            _isFill = false;
+            Grid.SetZIndex(canvas, 1);
+            Grid.SetZIndex(border, 0);
+        }
+
+        private void Ribbon_MouseMove(object sender, MouseEventArgs e)
+        {
+
+            this.Cursor = Cursors.Arrow;
+        }
+
+        private void fillButton_Click(object sender, RoutedEventArgs e)
+        {
+            _isFill = true;
+            _isChooseObject = false;
+            _drawMode = false;
+
+            Grid.SetZIndex(canvas, 1);
+            Grid.SetZIndex(border, 0);
+
+            clearChoooseMode();
+        }
+
+        private void eraserButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
         private void zoomInButton_Click(object sender, RoutedEventArgs e)
@@ -670,13 +731,6 @@ namespace Paint
                 border.Width = border.ActualWidth / 0.8;
                 border.Height = border.ActualHeight / 0.8;
             }
-        }
-
-        private void cursorButton_Click(object sender, RoutedEventArgs e)
-        {
-            _drawMode = false;
-            Grid.SetZIndex(canvas, 1);
-            Grid.SetZIndex(border, 0);
         }
 
         //void onDragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
