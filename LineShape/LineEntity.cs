@@ -57,7 +57,7 @@ namespace LineShape
             return MemberwiseClone();
         }
 
-        public Point GetTopLeft()
+        public Point GetLeftTop()
         {
             return Start;
         }
@@ -85,11 +85,6 @@ namespace LineShape
         public DoubleCollection GetStrokeType()
         {
             return StrokeType;
-        }
-
-        public Point GetLeftTop()
-        {
-            throw new NotImplementedException();
         }
     }
 }

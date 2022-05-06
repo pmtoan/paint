@@ -551,23 +551,17 @@ namespace Paint
             // Chỉ xét trường hợp nhấn vào các object trên canvas
             if (element != null && _shapesPrototypes.ContainsKey(element.GetType().Name))
             {
+                int idx = -1;
                 double left = Canvas.GetLeft(element as UIElement);
                 double top = Canvas.GetTop(element as UIElement);
-                
-                int idx = _drawnShapes.FindIndex(s => s.GetLeftTop().X == left && s.GetLeftTop().Y == top);
-                Debug.WriteLine(element.GetType().Name);
-                Debug.WriteLine(left + ", " + top);
-                Debug.WriteLine(Canvas.GetRight(element as UIElement) + ", " + Canvas.GetBottom(element as UIElement));
-                Debug.WriteLine(_drawnShapes.Count);
-                Debug.WriteLine(_drawnShapes[0].GetLeftTop());
-                Debug.WriteLine(_drawnShapes[0].GetRightBottom());
+
+                idx = _drawnShapes.FindIndex(s => s.GetLeftTop().X == left && s.GetLeftTop().Y == top);
 
                 double right = _drawnShapes[idx].GetRightBottom().X;
                 double bottom = _drawnShapes[idx].GetRightBottom().Y;
 
                 if (_isFill)
                 {
-                    Debug.WriteLine(idx);
                     Brush br = new SolidColorBrush(_currentFillColor);
                     _drawnShapes[idx].HandleFillColor(_currentFillColor);
                     element.GetType().GetProperty("Fill").SetValue(element, br);
@@ -598,9 +592,8 @@ namespace Paint
 
                     var painter = _painterPrototypes[_drawnShapes[_chosenElementIndex].Name];
                     var ele = painter.Draw(_drawnShapes[_chosenElementIndex]);
-                    canvas.Children.Add(ele); 
+                    canvas.Children.Add(ele);
                 }
-
                 _chosenElementIndex = idx;
                 canvas.Children.Remove(element as UIElement);
 
@@ -633,12 +626,6 @@ namespace Paint
                 canvas.Children.Remove(_frameChosen);
                 _frameChosen.Child = null;
 
-<<<<<<< Updated upstream
-=======
-                double top = _drawnShapes[_chosenElementIndex].GetLeftTop().Y;
-                double left = _drawnShapes[_chosenElementIndex].GetLeftTop().X;
-
->>>>>>> Stashed changes
                 var painter = _painterPrototypes[_drawnShapes[_chosenElementIndex].Name];
                 var ele = painter.Draw(_drawnShapes[_chosenElementIndex]);
 
@@ -679,15 +666,9 @@ namespace Paint
 
             if (_isDrag)
             {
-<<<<<<< Updated upstream
-                Point top_left = _drawnShapes[_chosenElementIndex].GetTopLeft();
+                Point top_left = _drawnShapes[_chosenElementIndex].GetLeftTop();
                 top_left.X = Canvas.GetLeft(_frameChosen) + 5;
                 top_left.Y = Canvas.GetTop(_frameChosen) + 5;
-=======
-                Point top_left = _drawnShapes[_chosenElementIndex].GetLeftTop();
-                top_left.X = Canvas.GetLeft(_frameChosen) + 2.5;
-                top_left.Y = Canvas.GetTop(_frameChosen) + 2.5;
->>>>>>> Stashed changes
 
                 Point right_bottom = _drawnShapes[_chosenElementIndex].GetRightBottom();
                 right_bottom.X = Canvas.GetRight(_frameChosen) + 5;

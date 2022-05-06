@@ -63,14 +63,9 @@ namespace RectangleShape
             return LeftTop;
         }
 
-        public Point GetrightBottom()
-        {
-            return RightBottom;
-        }
-
         public Point GetRightBottom()
         {
-            return MousePoint;
+            return RightBottom;
         }
 
         public int GetThickness()
