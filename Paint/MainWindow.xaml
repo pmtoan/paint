@@ -40,9 +40,9 @@
 
                 <ribbon:RibbonGroup Header="Tool">
                     <StackPanel Orientation="Horizontal">
+                        <ribbon:RibbonButton Margin="5" SmallImageSource="./images/cursor.png" Click="cursorButton_Click" />
                         <ribbon:RibbonButton Margin="5" SmallImageSource="./images/pencil.png"/>
                         <ribbon:RibbonButton Margin="5" SmallImageSource="./images/fill.png"/>
-                        <ribbon:RibbonButton Margin="5" SmallImageSource="./images/text.png"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <ribbon:RibbonButton Name="eraserButton" Click="eraserButton_Click" Margin="5" SmallImageSource="./images/eraser.png"/>
@@ -164,7 +164,7 @@
                         </StackPanel>
                         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="0,10,0,0">
                             <Label Content="Fill" FontSize="12"/>
-                            <xctk:ColorPicker Name="FillColor" Margin="29,0,0,0"
+                            <xctk:ColorPicker x:Name="FillColor" Margin="29,0,0,0"
                                           DisplayColorAndName="False" Height="25" Width="70"
                                           SelectedColor="Transparent" ShowDropDownButton="False"
                                           AvailableColorsSortingMode="HueSaturationBrightness"
@@ -174,15 +174,23 @@
                 </ribbon:RibbonGroup>
             </ribbon:RibbonTab>
         </ribbon:Ribbon>
-
+        
         <DockPanel LastChildFill="False">
             <Viewbox Stretch="Fill">
                 <Grid Background="Gray">
-                    <Canvas x:Name="canvas" Background="White" Focusable="False" Width="800" Height="800">
+                    <Canvas x:Name="canvas" Background="White" Focusable="False" MouseDown="canvas_MouseDown" PreviewMouseMove="canvas_MouseMove" MouseUp="canvas_MouseUp" Width="800" Height="800">
+                        <Border  BorderBrush="CadetBlue" 
+                                    BorderThickness="1" 
+                                    Canvas.Left="50" Canvas.Top="50"
+                                    Padding="1">
+
+                            <Ellipse Canvas.Left="50" Canvas.Top="50" Width="100" Height="100" StrokeThickness="3" Stroke="Yellow" />
+                        </Border>
+                        
                     </Canvas>
                     <Border Name="border" Width="800" Height="800" Background="Transparent" MouseDown="border_MouseDown" MouseMove="border_MouseMove" MouseUp="border_MouseUp"/>
                 </Grid>
-            </Viewbox>
+            </Viewbox> 
         </DockPanel>
     </DockPanel>
 
