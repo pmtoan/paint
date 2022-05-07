@@ -54,6 +54,8 @@ namespace Paint
         List<Canvas> undoImage = new List<Canvas>();
         List<BitmapImage> undoBitmapImage = new List<BitmapImage>();
 
+        RibbonRadioButton _button;
+
         // Cấu hình
         Dictionary<string, IPaintBusiness> _painterPrototypes = new Dictionary<string, IPaintBusiness>();
         Dictionary<string, IShapeEntity> _shapesPrototypes = new Dictionary<string, IShapeEntity>();
@@ -447,12 +449,12 @@ namespace Paint
 
         private void chooseShapeBtnClick(object sender, RoutedEventArgs e)
         {
-            var button = sender as RibbonRadioButton;
-            var entity = button.Tag as IShapeEntity;
+            _button = sender as RibbonRadioButton;
+            var entity = _button.Tag as IShapeEntity;
             if (_prevShape == entity)
             {
                 _drawMode = !_drawMode;
-                button.IsChecked = !button.IsChecked;
+                _button.IsChecked = !_button.IsChecked;
             }
             else
             {
@@ -469,14 +471,15 @@ namespace Paint
                         _preview.HandleThickness(_currentThickness);
                         _preview.HandleStrokeType(_currentStrokeType);
 
-                        _chosenElementIndex = -1;
-                        _frameChosen = null;
-                        _isChooseObject = false;
-                        _isFill = false;
                         Grid.SetZIndex(canvas, 0);
                         Grid.SetZIndex(border, 1);
 
                         clearChoooseMode();
+
+                        _chosenElementIndex = -1;
+                        _frameChosen = null;
+                        _isChooseObject = false;
+                        _isFill = false;
                     }
                     _prevShape = entity;
                 }
@@ -685,11 +688,30 @@ namespace Paint
 
         private void cursorButton_Click(object sender, RoutedEventArgs e)
         {
-            _isChooseObject = true;
+            _button = sender as RibbonRadioButton;
+            if (_isChooseObject == true)
+            {
+                _isChooseObject = !_isChooseObject;
+                Grid.SetZIndex(canvas, 0);
+                Grid.SetZIndex(border, 1);
+
+                clearChoooseMode();
+
+                _chosenElementIndex = -1;
+                _frameChosen = null;
+                _isChooseObject = false;
+                _button.IsChecked = !_button.IsChecked;
+            }
+            else
+            {
+                _isChooseObject = true;
+                Grid.SetZIndex(canvas, 1);
+                Grid.SetZIndex(border, 0);
+            }
             _drawMode = false;
             _isFill = false;
-            Grid.SetZIndex(canvas, 1);
-            Grid.SetZIndex(border, 0);
+            _prevShape = null;
+
         }
         private void fillButton_Click(object sender, RoutedEventArgs e)
         {
@@ -726,19 +748,33 @@ namespace Paint
         }
         private void cutButton_Click(object sender, RoutedEventArgs e)
         {
+
+            Grid.SetZIndex(canvas, 0);
+            Grid.SetZIndex(border, 1);
+
+            clearChoooseMode();
+
+            _chosenElementIndex = -1;
+            _frameChosen = null;
+            _isChooseObject = false;
+            _isFill = false;
+
             if (_chosenElementIndex != -1)
             {
                 tempStoreShapeEntity = _drawnShapes[_chosenElementIndex].Clone() as IShapeEntity;
- 
-                foreach(UIElement element in canvas.Children)
+                UIElement canvasDeleteShape = null;
+                foreach (UIElement element in canvas.Children)
                 {
-                    Point LeftTop = new Point(Canvas.GetLeft(element), Canvas.GetTop(element));
-
+                    Point LeftTop = new Point(Canvas.GetLeft(element) + 5, Canvas.GetTop(element) + 5);
 
                     if (LeftTop == tempStoreShapeEntity.GetLeftTop())
                     {
-                        canvas.Children.Remove(element);
+                        canvasDeleteShape = element;
                     }
+                }
+                if(canvasDeleteShape != null)
+                {
+                    canvas.Children.Remove(canvasDeleteShape);
                 }
 
                 _drawnShapes.RemoveAt(_chosenElementIndex);
@@ -746,7 +782,18 @@ namespace Paint
         }
         private void copyButton_Click(object sender, RoutedEventArgs e)
         {
-            if(_chosenElementIndex != -1)
+
+            Grid.SetZIndex(canvas, 0);
+            Grid.SetZIndex(border, 1);
+
+            clearChoooseMode();
+
+            _chosenElementIndex = -1;
+            _frameChosen = null;
+            _isChooseObject = false;
+            _isFill = false;
+
+            if (_chosenElementIndex != -1)
             {
                 tempStoreShapeEntity = _drawnShapes[_chosenElementIndex].Clone() as IShapeEntity;
             }
