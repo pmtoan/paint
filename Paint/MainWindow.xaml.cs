@@ -40,12 +40,13 @@ namespace Paint
         string _currentStrokeType = null;
         IShapeEntity _preview = null;
         IShapeEntity tempStoreShapeEntity = null;
+        ImageStore tempStoreImage = null;
 
         int _chosenElementIndex = -1;
         Border _frameChosen = null;
         Point _offsetLeftTop;
         Point _offsetRightBottom;
-        int numPasteShape = 0;
+        int numPasteShape = 1;
 
         Point _start;
         List<IShapeEntity> _drawnShapes = new List<IShapeEntity>();
@@ -67,10 +68,15 @@ namespace Paint
             public string PluginIconPath { get; set; }
         }
 
-        class ImageStore
+        class ImageStore : ICloneable
         {
             public Image image = new Image();
             public double top, left, bottom, right;
+
+            public object Clone()
+            {
+                return MemberwiseClone();
+            }
         }
 
         public MainWindow()
@@ -143,7 +149,7 @@ namespace Paint
             _isFill = false;
             _isShapeDrag = false;
             _isImageDrag = false;
-            _frameChosen = null;
+            _chosenElementIndex = -1;
         }
         private void saveButton_Click(object sender, RoutedEventArgs e)
         {
@@ -852,65 +858,73 @@ namespace Paint
             {
                 IPaintBusiness painter = _painterPrototypes[tempStoreShapeEntity.Name];
 
-                tempStoreShapeEntity.HandleStart(new Point(5 * numPasteShape,5 * numPasteShape));
+                tempStoreShapeEntity.HandleStart(new Point(5 * numPasteShape, 5 * numPasteShape));
                 tempStoreShapeEntity.HandleEnd(new Point(
-                  tempStoreShapeEntity.GetRightBottom().X - (tempStoreShapeEntity.GetLeftTop().X - 5 * numPasteShape),
-                  tempStoreShapeEntity.GetRightBottom().Y - (tempStoreShapeEntity.GetLeftTop().Y - 5 * numPasteShape)));
+                    tempStoreShapeEntity.GetRightBottom().X - (tempStoreShapeEntity.GetLeftTop().X - 5 * numPasteShape),
+                    tempStoreShapeEntity.GetRightBottom().Y - (tempStoreShapeEntity.GetLeftTop().Y - 5 * numPasteShape)));
 
                 UIElement ele = painter.Draw(tempStoreShapeEntity);
 
                 canvas.Children.Add(ele);
                 _drawnShapes.Add(tempStoreShapeEntity.Clone() as IShapeEntity);
-                numPasteShape++;
             }
+            if(tempStoreImage != null)
+            {
+                ImageStore pasteImage = new ImageStore();
+                 
+                Canvas.SetTop(tempStoreImage.image, 5 * numPasteShape);
+                Canvas.SetLeft(tempStoreImage.image, 5 * numPasteShape);
+                Canvas.SetBottom(tempStoreImage.image, tempStoreImage.image.Height + 5 * numPasteShape);
+                Canvas.SetRight(tempStoreImage.image, tempStoreImage.image.Width + 5 * numPasteShape);
+
+                tempStoreImage.top = Canvas.GetTop(tempStoreImage.image);
+                tempStoreImage.left = Canvas.GetLeft(tempStoreImage.image);
+                tempStoreImage.bottom = Canvas.GetBottom(tempStoreImage.image);
+                tempStoreImage.right = Canvas.GetRight(tempStoreImage.image);
+
+                Canvas.SetTop(pasteImage.image, tempStoreImage.top);
+                Canvas.SetLeft(pasteImage.image, tempStoreImage.left);
+                Canvas.SetBottom(pasteImage.image, tempStoreImage.bottom);
+                Canvas.SetRight(pasteImage.image, tempStoreImage.right);
+                pasteImage.image.Source = tempStoreImage.image.Source;
+                pasteImage.image.Width = tempStoreImage.image.Width;
+                pasteImage.image.Height = tempStoreImage.image.Height;
+
+                canvas.Children.Add(pasteImage.image);
+
+                imageImport.Add(pasteImage);
+
+            }
+            numPasteShape++;
         }
 
         private void cutButton_Click(object sender, RoutedEventArgs e)
         {
-            if (_chosenElementIndex != -1)
+            if (prevObject == "Image")
             {
-                tempStoreShapeEntity = _drawnShapes[_chosenElementIndex].Clone() as IShapeEntity;
-
-                //UIElement canvasDeleteShape = null;
-                //foreach (UIElement element in canvas.Children)
-                //{
-                //    Point LeftTop = new Point(Canvas.GetLeft(element) + 5, Canvas.GetTop(element) + 5);
-
-                //    if (LeftTop == tempStoreShapeEntity.GetLeftTop())
-                //    {
-                //        canvasDeleteShape = element;
-                //    }
-                //}
-                //if (canvasDeleteShape != null)
-                //{
-                //    canvas.Children.Remove(canvasDeleteShape);
-                //}
-
-                _drawnShapes.RemoveAt(_chosenElementIndex);
-
-                if (_drawnShapes.Count < 1)
-                    _drawnShapes = new List<IShapeEntity>();
-
-                int _count = 0;
-
-                canvas.Children.Clear();
-
-                foreach (var item in _drawnShapes)
+                if (_chosenElementIndex != -1 && tempStoreImage == null)
                 {
-                    if (item == null && imageImport[_count] != null)
-                    {
-                        canvas.Children.Add(imageImport[_count].image);
-                        _count++;
-                    }
-                    else
-                    {
-                        IPaintBusiness painter = _painterPrototypes[item.Name];
-                        UIElement shape = painter.Draw(item);
+                    tempStoreImage = imageImport[_chosenElementIndex].Clone() as ImageStore;
 
-                        canvas.Children.Add(shape);
-                    }
+                    imageImport.RemoveAt(_chosenElementIndex);
+
+                    canvas.Children.Remove(_frameChosen);
+                    clearChoooseMode();
                 }
+                tempStoreShapeEntity = null;
+            }
+            else
+            {
+                if (_chosenElementIndex != -1 && tempStoreShapeEntity == null)
+                {
+                    tempStoreShapeEntity = _drawnShapes[_chosenElementIndex].Clone() as IShapeEntity;
 
+                    _drawnShapes.RemoveAt(_chosenElementIndex);
+
+                    canvas.Children.Remove(_frameChosen);
+                    clearChoooseMode();
+                }
+                tempStoreImage = null;
             }
         }
 
@@ -918,7 +932,16 @@ namespace Paint
         {
             if (_chosenElementIndex != -1)
             {
-                tempStoreShapeEntity = _drawnShapes[_chosenElementIndex].Clone() as IShapeEntity;
+                if (prevObject == "Image")
+                {
+                    tempStoreImage = imageImport[_chosenElementIndex].Clone() as ImageStore;
+                    tempStoreShapeEntity = null;
+                }
+                else
+                {
+                    tempStoreShapeEntity = _drawnShapes[_chosenElementIndex].Clone() as IShapeEntity;
+                    tempStoreImage = null;
+                }
             }
         }
 
