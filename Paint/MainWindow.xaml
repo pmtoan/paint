@@ -59,7 +59,7 @@
                         <ribbon:RibbonControlGroup x:Name="shapeList" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                             <ribbon:RibbonControlGroup.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <WrapPanel IsItemsHost="True" Orientation="Horizontal" />
+                                    <WrapPanel Orientation="Horizontal" />
                                 </ItemsPanelTemplate>
                             </ribbon:RibbonControlGroup.ItemsPanel>
                             <ribbon:RibbonControlGroup.ItemTemplate>

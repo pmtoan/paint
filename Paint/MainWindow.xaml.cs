@@ -441,44 +441,6 @@ namespace Paint
             }
         }
 
-        private void chooseShapeBtnClick(object sender, RoutedEventArgs e)
-        {
-            var button = sender as RibbonRadioButton;
-            var entity = button.Tag as IShapeEntity;
-            if (_prevShape == entity)
-            {
-                _drawMode = !_drawMode;
-                button.IsChecked = !button.IsChecked;
-            }
-            else
-            {
-                if (entity != null)
-                {
-                    if (_currentType != entity.Name || _currentType == "")
-                    {
-                        _drawMode = true;
-                        _currentType = entity!.Name;
-
-                        _preview = (_shapesPrototypes[_currentType].Clone() as IShapeEntity)!;
-                        _preview.HandleStrokeColor(_currentStrokeColor);
-                        _preview.HandleFillColor(_currentFillColor);
-                        _preview.HandleThickness(_currentThickness);
-                        _preview.HandleStrokeType(_currentStrokeType);
-
-                        _chosenElementIndex = -1;
-                        _frameChosen = null;
-                        _isChooseObject = false;
-                        _isFill = false;
-                        Grid.SetZIndex(canvas, 0);
-                        Grid.SetZIndex(border, 1);
-
-                        clearChoooseMode();
-                    }
-                    _prevShape = entity;
-                }
-            }
-        }
-
         private void border_MouseDown(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
@@ -495,10 +457,11 @@ namespace Paint
         private void border_MouseMove(object sender, MouseEventArgs e)
 
         {
+            this.Cursor = Cursors.Cross;
+            Debug.WriteLine("move");
             var end = e.GetPosition(canvas);
             if (_drawMode && _isDrawing && !_finishShape)
             {
-                
                 _preview.HandleEnd(end);
 
                 int _count = 0;
@@ -523,11 +486,6 @@ namespace Paint
                 var previewElement = previewPainter.Draw(_preview);
                 canvas.Children.Add(previewElement);
             }
-
-            if (_drawMode)
-            {
-                this.Cursor = Cursors.Cross;
-            }
         }
 
         private void border_MouseUp(object sender, MouseButtonEventArgs e)
@@ -540,8 +498,6 @@ namespace Paint
                 var end = e.GetPosition(canvas); // Điểm kết thúc
 
                 _preview.HandleEnd(end);
-
-                Debug.WriteLine(_preview.GetRightBottom());
 
                 _drawnShapes.Add(_preview.Clone() as IShapeEntity);
             }
@@ -563,7 +519,7 @@ namespace Paint
                 double left = Canvas.GetLeft(element as UIElement);
                 double top = Canvas.GetTop(element as UIElement);
 
-                idx = _drawnShapes.FindIndex(s => s.GetLeftTop().X == left && s.GetLeftTop().Y == top);
+                idx = _drawnShapes.FindIndex(s => s != null && s.GetLeftTop().X == left && s.GetLeftTop().Y == top);
 
                 double right = _drawnShapes[idx].GetRightBottom().X;
                 double bottom = _drawnShapes[idx].GetRightBottom().Y;
@@ -688,31 +644,69 @@ namespace Paint
             _isDrag = false;
         }
 
+        private void chooseShapeBtnClick(object sender, RoutedEventArgs e)
+        {
+            var button = sender as RibbonRadioButton;
+            var entity = button.Tag as IShapeEntity;
+
+            if (entity != null)
+            {
+                if (_currentType != entity.Name || _currentType == "")
+                {
+                    _drawMode = true;
+                    _isDrag = false;
+                    _isChooseObject = false;
+                    _isFill = false;
+
+                    _currentType = entity!.Name;
+                    Debug.WriteLine(_currentType);
+
+                    _preview = (_shapesPrototypes[_currentType].Clone() as IShapeEntity)!;
+                    _preview.HandleStrokeColor(_currentStrokeColor);
+                    _preview.HandleFillColor(_currentFillColor);
+                    _preview.HandleThickness(_currentThickness);
+                    _preview.HandleStrokeType(_currentStrokeType);
+
+                    _chosenElementIndex = -1;
+                    _frameChosen = null;
+                    _isChooseObject = false;
+                    _isFill = false;
+                    Grid.SetZIndex(canvas, 0);
+                    Grid.SetZIndex(border, 1);
+
+                    clearChoooseMode();
+                }
+            }
+        }
         private void cursorButton_Click(object sender, RoutedEventArgs e)
         {
-            _isChooseObject = true;
             _drawMode = false;
+            _isChooseObject = true;
             _isFill = false;
+
+            _currentType = "";
+
             Grid.SetZIndex(canvas, 1);
             Grid.SetZIndex(border, 0);
+        }
+        private void fillButton_Click(object sender, RoutedEventArgs e)
+        {
+            _drawMode = false;
+            _isChooseObject = false;
+            _isFill = true;
+
+            _currentType = "";
+
+            Grid.SetZIndex(canvas, 1);
+            Grid.SetZIndex(border, 0);
+
+            clearChoooseMode();
         }
 
         private void Ribbon_MouseMove(object sender, MouseEventArgs e)
         {
 
             this.Cursor = Cursors.Arrow;
-        }
-
-        private void fillButton_Click(object sender, RoutedEventArgs e)
-        {
-            _isFill = true;
-            _isChooseObject = false;
-            _drawMode = false;
-
-            Grid.SetZIndex(canvas, 1);
-            Grid.SetZIndex(border, 0);
-
-            clearChoooseMode();
         }
 
         private void eraserButton_Click(object sender, RoutedEventArgs e)
