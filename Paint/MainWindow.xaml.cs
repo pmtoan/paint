@@ -35,7 +35,7 @@ namespace Paint
         Color _currentFillColor = Colors.Transparent;
         string _currentStrokeType = null;
         IShapeEntity _preview = null;
-        IShapeEntity _prevShape = null;
+        IShapeEntity tempStoreShapeEntity = null;
 
         int _chosenElementIndex = -1;
         Border _frameChosen = null;
@@ -66,6 +66,7 @@ namespace Paint
         {
             InitializeComponent();
         }
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             var exeFolder = AppDomain.CurrentDomain.BaseDirectory;
@@ -318,6 +319,10 @@ namespace Paint
 
                 ImageBrush myImageBrush = new ImageBrush(theImage);
                 Canvas newImage = new Canvas();
+                Canvas.SetLeft(newImage, 10);
+                Canvas.SetTop(newImage, 10);
+                Canvas.SetBottom(newImage, canvas.ActualHeight - theImage.Height / 3);
+                Canvas.SetRight(newImage, canvas.ActualWidth - theImage.Width / 3);
                 newImage.Width = theImage.Width / 3;
                 newImage.Height = theImage.Height / 3;
                 newImage.Background = myImageBrush;
@@ -508,7 +513,6 @@ namespace Paint
             var canvasControl = sender as Canvas;
             if (canvasControl == null)
                 return;
-
             HitTestResult hitTestResult = VisualTreeHelper.HitTest(canvasControl, e.GetPosition(canvasControl));
             var element = hitTestResult.VisualHit;
           
@@ -573,8 +577,6 @@ namespace Paint
                 Canvas.SetBottom(_frameChosen, bottom - 5);
 
                 canvas.Children.Add(_frameChosen);
-
-                
             }
             else
             {
@@ -678,6 +680,7 @@ namespace Paint
                 }
             }
         }
+
         private void cursorButton_Click(object sender, RoutedEventArgs e)
         {
             _drawMode = false;
@@ -689,6 +692,7 @@ namespace Paint
             Grid.SetZIndex(canvas, 1);
             Grid.SetZIndex(border, 0);
         }
+
         private void fillButton_Click(object sender, RoutedEventArgs e)
         {
             _drawMode = false;
@@ -733,6 +737,56 @@ namespace Paint
                 canvas.Height = canvas.ActualHeight / 0.8;
                 border.Width = border.ActualWidth / 0.8;
                 border.Height = border.ActualHeight / 0.8;
+            }
+        }
+
+        private void pasteButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (tempStoreShapeEntity != null)
+            {
+                var painter = _painterPrototypes[tempStoreShapeEntity.Name];
+
+                tempStoreShapeEntity.HandleStart(new Point(10, 10));
+                tempStoreShapeEntity.HandleEnd(new Point(
+                  tempStoreShapeEntity.GetRightBottom().X - (tempStoreShapeEntity.GetLeftTop().X - 10),
+                  tempStoreShapeEntity.GetRightBottom().Y - (tempStoreShapeEntity.GetLeftTop().Y - 10)));
+
+                var ele = painter.Draw(tempStoreShapeEntity);
+
+                canvas.Children.Add(ele);
+                _drawnShapes.Add(tempStoreShapeEntity);
+            }
+        }
+
+        private void cutButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_chosenElementIndex != -1)
+            {
+                tempStoreShapeEntity = _drawnShapes[_chosenElementIndex].Clone() as IShapeEntity;
+                UIElement canvasDeleteShape = null;
+                foreach (UIElement element in canvas.Children)
+                {
+                    Point LeftTop = new Point(Canvas.GetLeft(element) + 5, Canvas.GetTop(element) + 5);
+
+                    if (LeftTop == tempStoreShapeEntity.GetLeftTop())
+                    {
+                        canvasDeleteShape = element;
+                    }
+                }
+                if (canvasDeleteShape != null)
+                {
+                    canvas.Children.Remove(canvasDeleteShape);
+                }
+                _drawnShapes.RemoveAt(_chosenElementIndex);
+                
+            }
+        }
+
+        private void copyButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_chosenElementIndex != -1)
+            {
+                tempStoreShapeEntity = _drawnShapes[_chosenElementIndex].Clone() as IShapeEntity;
             }
         }
 

@@ -33,9 +33,9 @@
 
             <ribbon:RibbonTab Header="Home">
                 <ribbon:RibbonGroup Header="Clipboard">
-                    <ribbon:RibbonButton Margin="5" Label="Paste"  LargeImageSource="./images/paste.png"/>
-                    <ribbon:RibbonButton Margin="5" Label=" Cut" SmallImageSource="./images/cut.png"/>
-                    <ribbon:RibbonButton Margin="5" Label=" Copy" SmallImageSource="./images/copy.png"/>
+                    <ribbon:RibbonButton Margin="5" Label="Paste"  LargeImageSource="./images/paste.png" Click="pasteButton_Click"/>
+                    <ribbon:RibbonButton Margin="5" Label=" Cut" SmallImageSource="./images/cut.png" Click="cutButton_Click"/>
+                    <ribbon:RibbonButton Margin="5" Label=" Copy" SmallImageSource="./images/copy.png" Click="copyButton_Click"/>
                 </ribbon:RibbonGroup>
 
                 <ribbon:RibbonGroup Header="Canvas">
