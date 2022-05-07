@@ -588,17 +588,22 @@ namespace Paint
                 int idx = -1;
                 double left = Canvas.GetLeft(element as UIElement);
                 double top = Canvas.GetTop(element as UIElement);
+                double right, bottom;
 
                 if (element.GetType().Name == "Image")
                 {
                     idx = imageImport.FindIndex(s => s != null && s.left == left && s.top == top);
+
+                    right = imageImport[idx].right;
+                    bottom = imageImport[idx].bottom;
                 }
                 else
                 {
                     idx = _drawnShapes.FindIndex(s => s != null && s.GetLeftTop().X == left && s.GetLeftTop().Y == top);
+
+                    right = _drawnShapes[idx].GetRightBottom().X;
+                    bottom = _drawnShapes[idx].GetRightBottom().Y;
                 }
-                double right = _drawnShapes[idx].GetRightBottom().X;
-                double bottom = _drawnShapes[idx].GetRightBottom().Y;
 
                 if (_isFill && element.GetType().Name != "Image")
                 {
@@ -612,8 +617,17 @@ namespace Paint
                 if (idx == _chosenElementIndex && _isChooseObject)
                 {
                     _isDrag = true;
-                    _isImageDrag = false;
-                    _isShapeDrag = true;
+
+                    if (element.GetType().Name == "Image")
+                    {
+                        _isImageDrag = true;
+                        _isShapeDrag = false;
+                    }
+                    else
+                    {
+                        _isImageDrag = false;
+                        _isShapeDrag = true;
+                    }
 
                     _offsetLeftTop = e.GetPosition(canvas);
                     _offsetRightBottom = e.GetPosition(canvas);
@@ -631,7 +645,6 @@ namespace Paint
                 {
                     if (element.GetType().Name == prevObject)
                     {
-                        MessageBox.Show(prevObject);
                         canvas.Children.Remove(_frameChosen);
                         _frameChosen.Child = null;
                         Canvas.SetTop(imageImport[_chosenElementIndex].image, imageImport[_chosenElementIndex].top);
