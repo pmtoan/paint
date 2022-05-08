@@ -196,6 +196,10 @@ namespace Paint
                         br.Write(imageImport[count].image.Width.ToString());
                         br.Write(imageImport[count].image.Height.ToString());
                         br.Write(bitmapImageImport[count].ToString());
+                        br.Write(imageImport[count].top.ToString());
+                        br.Write(imageImport[count].left.ToString());
+                        br.Write(imageImport[count].bottom.ToString());
+                        br.Write(imageImport[count].right.ToString());
                         count++;
                     }
                 }
@@ -240,7 +244,7 @@ namespace Paint
                     string name, typeStroke;
 
                     //Biến cho Image
-                    string widthImage, heightImage, imageBrush;
+                    string widthImage, heightImage, imageBrush,imageTop, imageLeft, imageBottom, imageRight;
 
                     if (typeCanvas == "shape")
                     {
@@ -273,30 +277,47 @@ namespace Paint
                         widthImage = br.ReadString();
                         heightImage = br.ReadString();
                         imageBrush = br.ReadString();
-
-                        IShapeEntity shape = null;
-                        _drawnShapes.Add(shape);
+                        imageTop = br.ReadString();
+                        imageLeft = br.ReadString();
+                        imageBottom = br.ReadString();
+                        imageRight = br.ReadString();
 
                         ImageStore imageSave = new ImageStore();
-                        imageSave.image.Width = Convert.ToDouble(widthImage);
-                        imageSave.image.Height = Convert.ToDouble(heightImage);
 
                         Uri imageUri = new Uri(imageBrush, UriKind.Relative);
                         BitmapImage theImage = new BitmapImage(imageUri);
                         ImageBrush myImageBrush = new ImageBrush(theImage);
+
                         imageSave.image.Source = theImage;
+                        imageSave.image.Width = Convert.ToDouble(widthImage);
+                        imageSave.image.Height = Convert.ToDouble(heightImage);
+
+                        Canvas.SetTop(imageSave.image, Convert.ToDouble(imageTop));
+                        Canvas.SetLeft(imageSave.image, Convert.ToDouble(imageLeft));
+                        Canvas.SetBottom(imageSave.image, Convert.ToDouble(imageBottom));
+                        Canvas.SetRight(imageSave.image, Convert.ToDouble(imageRight));
+
+
+                        imageSave.top = Canvas.GetTop(imageSave.image);
+                        imageSave.left = Canvas.GetLeft(imageSave.image);
+                        imageSave.bottom = Canvas.GetBottom(imageSave.image);
+                        imageSave.right = Canvas.GetRight(imageSave.image);
+
                         imageImport.Add(imageSave);
                         bitmapImageImport.Add(theImage);
+                        IShapeEntity shape = null;
+                        _drawnShapes.Add(shape);
                     }
                 }
 
                 int _count = 0;
-                
+                canvas.Children.Clear();
                 foreach (var item in _drawnShapes)
                 {
                     if (item == null && imageImport[_count] != null)
                     {
                         canvas.Children.Add(imageImport[_count].image);
+                        //MessageBox.Show(imageImport[_count].image.Source + "\n" + imageImport[_count].image.Width.ToString() + "\n" + imageImport[_count].image.Height.ToString() + "\n" + imageImport[_count].top.ToString() + "\n" + imageImport[_count].left.ToString() + "\n" + imageImport[_count].bottom.ToString() + "\n" + imageImport[_count].right.ToString());
                         _count++;
                     }
                     else
@@ -308,7 +329,6 @@ namespace Paint
                     }
                 }
             }
-
             e.Handled = true;
         }
         private void exportButton_Click(object sender, RoutedEventArgs e)
@@ -354,7 +374,7 @@ namespace Paint
                 ImageBrush myImageBrush = new ImageBrush(theImage);
                
                 ImageStore newImage = new ImageStore();
-                //newImage.image = new Image();
+                
                 newImage.image.Width = theImage.Width / 3;
                 newImage.image.Height = theImage.Height / 3;
                 newImage.image.Source = theImage;
@@ -374,6 +394,7 @@ namespace Paint
                 IShapeEntity shapeImage = null;
                 _drawnShapes.Add(shapeImage);
             }
+
             int _count = 0;
             canvas.Children.Clear();
             foreach (var item in _drawnShapes)
@@ -576,7 +597,6 @@ namespace Paint
                 }
 
                 _chosenElementIndex = -1;
-                _frameChosen = null;
             }
 
         }
@@ -596,12 +616,16 @@ namespace Paint
                 double top = Canvas.GetTop(element as UIElement);
                 double right, bottom;
 
+
                 if (element.GetType().Name == "Image")
                 {
                     idx = imageImport.FindIndex(s => s != null && s.left == left && s.top == top);
 
                     right = imageImport[idx].right;
                     bottom = imageImport[idx].bottom;
+
+                    _isImageDrag = true;
+                    _isShapeDrag = false;
                 }
                 else
                 {
@@ -609,6 +633,9 @@ namespace Paint
 
                     right = _drawnShapes[idx].GetRightBottom().X;
                     bottom = _drawnShapes[idx].GetRightBottom().Y;
+
+                    _isImageDrag = false;
+                    _isShapeDrag = true;
                 }
 
                 if (_isFill && element.GetType().Name != "Image")
@@ -624,17 +651,6 @@ namespace Paint
                 {
                     _isDrag = true;
 
-                    if (element.GetType().Name == "Image")
-                    {
-                        _isImageDrag = true;
-                        _isShapeDrag = false;
-                    }
-                    else
-                    {
-                        _isImageDrag = false;
-                        _isShapeDrag = true;
-                    }
-
                     _offsetLeftTop = e.GetPosition(canvas);
                     _offsetRightBottom = e.GetPosition(canvas);
 
@@ -649,7 +665,7 @@ namespace Paint
 
                 if (idx != _chosenElementIndex && _chosenElementIndex != -1 && _isChooseObject)
                 {
-                    if (element.GetType().Name == prevObject)
+                    if (element.GetType().Name == "Image")
                     {
                         canvas.Children.Remove(_frameChosen);
                         _frameChosen.Child = null;
