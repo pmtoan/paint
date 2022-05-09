@@ -172,7 +172,6 @@ namespace Paint
             _isShapeDrag = false;
             _isImageDrag = false;
             _chosenElementIndex = -1;
-            numPasteShape = 0;
         }
         private void saveButton_Click(object sender, RoutedEventArgs e)
         {
@@ -233,6 +232,7 @@ namespace Paint
         }
         private void openButton_Click(object sender, RoutedEventArgs e)
         {
+            numPasteShape = 0;
             turnOffAllMode();
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == true)
@@ -368,7 +368,6 @@ namespace Paint
         }
         private void importButton_Click(object sender, RoutedEventArgs e)
         {
-            canvas.Children.Clear();
             turnOffAllMode();
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == true)
@@ -390,16 +389,13 @@ namespace Paint
                 newImage.left = Canvas.GetLeft(newImage.image);
                 newImage.bottom = Canvas.GetBottom(newImage.image);
                 newImage.right = Canvas.GetRight(newImage.image);
-
                 imageImport.Add(newImage);
                 bitmapImageImport.Add(theImage);
                 IShapeEntity shapeImage = null;
                 _drawnShapes.Add(shapeImage);
             }
-
-            drawCanvas();
-
             numPasteShape++;
+            drawCanvas();
             e.Handled = true;
         }
         private void undoButton_Click(object sender, RoutedEventArgs e)
