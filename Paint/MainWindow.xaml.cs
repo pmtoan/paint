@@ -368,16 +368,35 @@ namespace Paint
         }
         private void importButton_Click(object sender, RoutedEventArgs e)
         {
-            turnOffAllMode();
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == true)
             {
                 BitmapImage theImage = new BitmapImage(new Uri(openFileDialog.FileName, UriKind.Relative));
                
                 ImageStore newImage = new ImageStore();
-                
-                newImage.image.Width = theImage.Width / 3;
-                newImage.image.Height = theImage.Height / 3;
+
+                MessageBox.Show(theImage.Width.ToString() + " - " + canvas.ActualWidth.ToString());
+
+                if (theImage.Width > canvas.ActualWidth || theImage.Height > canvas.ActualHeight)
+                {
+                    if (theImage.Width > canvas.ActualWidth)
+                    {
+                        double scaleSize = theImage.Width / (canvas.ActualWidth / 4);
+                        newImage.image.Height = theImage.Height / scaleSize;
+                        newImage.image.Width = canvas.ActualWidth / 4;
+                    }
+                    if(theImage.Height > canvas.ActualHeight)
+                    {
+                        double scaleSize = theImage.Height / (canvas.ActualHeight / 4);
+                        newImage.image.Width = theImage.Width / scaleSize;
+                        newImage.image.Height = canvas.ActualHeight / 4;
+                    }
+                }
+                else
+                {
+                    newImage.image.Width = theImage.Width / 3;
+                    newImage.image.Height = theImage.Height / 3;
+                }
                 newImage.image.Source = theImage;
 
                 Canvas.SetTop(newImage.image, 5 * numPasteShape);
