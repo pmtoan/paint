@@ -375,8 +375,6 @@ namespace Paint
                
                 ImageStore newImage = new ImageStore();
 
-                MessageBox.Show(theImage.Width.ToString() + " - " + canvas.ActualWidth.ToString());
-
                 if (theImage.Width > canvas.ActualWidth || theImage.Height > canvas.ActualHeight)
                 {
                     if (theImage.Width > canvas.ActualWidth)
