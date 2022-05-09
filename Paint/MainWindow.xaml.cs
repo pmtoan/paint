@@ -150,6 +150,7 @@ namespace Paint
             _isShapeDrag = false;
             _isImageDrag = false;
             _chosenElementIndex = -1;
+            numPasteShape = 0;
         }
         private void saveButton_Click(object sender, RoutedEventArgs e)
         {
@@ -288,14 +289,21 @@ namespace Paint
                         BitmapImage theImage = new BitmapImage(imageUri);
                         ImageBrush myImageBrush = new ImageBrush(theImage);
 
-                        imageSave.image.Source = theImage;
                         imageSave.image.Width = Convert.ToDouble(widthImage);
                         imageSave.image.Height = Convert.ToDouble(heightImage);
+                        imageSave.image.Source = theImage;
 
-                        Canvas.SetTop(imageSave.image, Convert.ToDouble(imageTop));
-                        Canvas.SetLeft(imageSave.image, Convert.ToDouble(imageLeft));
-                        Canvas.SetBottom(imageSave.image, Convert.ToDouble(imageBottom));
-                        Canvas.SetRight(imageSave.image, Convert.ToDouble(imageRight));
+                        double dImageTop, dImageLeft, dImageBottom, dImageRight;
+
+                        dImageTop = Convert.ToDouble(imageTop);
+                        dImageLeft = Convert.ToDouble(imageLeft);
+                        dImageBottom = Convert.ToDouble(imageBottom);
+                        dImageRight = Convert.ToDouble(imageRight);
+
+                        Canvas.SetTop(imageSave.image, dImageTop);
+                        Canvas.SetLeft(imageSave.image, dImageLeft);
+                        Canvas.SetBottom(imageSave.image, dImageBottom);
+                        Canvas.SetRight(imageSave.image, dImageRight);
 
 
                         imageSave.top = Canvas.GetTop(imageSave.image);
@@ -305,30 +313,60 @@ namespace Paint
 
                         imageImport.Add(imageSave);
                         bitmapImageImport.Add(theImage);
-                        IShapeEntity shape = null;
-                        _drawnShapes.Add(shape);
-                    }
-                }
-
-                int _count = 0;
-                canvas.Children.Clear();
-                foreach (var item in _drawnShapes)
-                {
-                    if (item == null && imageImport[_count] != null)
-                    {
-                        canvas.Children.Add(imageImport[_count].image);
-                        //MessageBox.Show(imageImport[_count].image.Source + "\n" + imageImport[_count].image.Width.ToString() + "\n" + imageImport[_count].image.Height.ToString() + "\n" + imageImport[_count].top.ToString() + "\n" + imageImport[_count].left.ToString() + "\n" + imageImport[_count].bottom.ToString() + "\n" + imageImport[_count].right.ToString());
-                        _count++;
-                    }
-                    else
-                    {
-                        IPaintBusiness painter = _painterPrototypes[item.Name];
-                        UIElement shape = painter.Draw(item);
-
-                        canvas.Children.Add(shape);
+                        IShapeEntity shapeImage = null;
+                        _drawnShapes.Add(shapeImage);
                     }
                 }
             }
+
+            int _count = 0;
+            canvas.Children.Clear();
+            foreach (var item in _drawnShapes)
+            {
+                if (item == null && imageImport[_count] != null)
+                {
+                    ImageBrush myImageBrush = new ImageBrush(imageImport[_count].image.Source);
+                    Canvas cv = new Canvas();
+                    cv.Width = imageImport[_count].image.Width;
+                    cv.Height = imageImport[_count].image.Height;
+                    cv.Background = myImageBrush;
+                    Canvas.SetTop(cv, imageImport[_count].top);
+                    Canvas.SetLeft(cv, imageImport[_count].left);
+                    Canvas.SetBottom(cv, imageImport[_count].bottom);
+                    Canvas.SetRight(cv, imageImport[_count].right);
+                    canvas.Children.Add(cv);
+                    //canvas.Children.Add(imageImport[_count].image);
+                    //MessageBox.Show(imageImport[_count].image.Source + "\n" + imageImport[_count].image.Width.ToString() + "\n" + imageImport[_count].image.Height.ToString() + "\n" + Canvas.GetTop(imageImport[_count].image).ToString() + "\n" + Canvas.GetLeft(imageImport[_count].image).ToString() + "\n" + Canvas.GetBottom(imageImport[_count].image).ToString() + "\n" + Canvas.GetRight(imageImport[_count].image).ToString());
+                    _count++;
+                }
+                else
+                {
+                    IPaintBusiness painter = _painterPrototypes[item.Name];
+                    UIElement shape = painter.Draw(item);
+
+                    canvas.Children.Add(shape);
+                }
+            }
+
+            //int countImage = 0;
+            //canvas.Children.Clear();
+            //foreach (var item in _drawnShapes)
+            //{
+            //    if (item == null && imageImport[countImage] != null)
+            //    {
+            //        canvas.Children.Add(imageImport[countImage].image);
+            //        //MessageBox.Show(imageImport[_count].image.Source + "\n" + imageImport[_count].image.Width.ToString() + "\n" + imageImport[_count].image.Height.ToString() + "\n" + imageImport[_count].top.ToString() + "\n" + imageImport[_count].left.ToString() + "\n" + imageImport[_count].bottom.ToString() + "\n" + imageImport[_count].right.ToString());
+            //        _count++;
+            //    }
+            //    else
+            //    {
+            //        IPaintBusiness painter = _painterPrototypes[item.Name];
+            //        UIElement shape = painter.Draw(item);
+
+            //        canvas.Children.Add(shape);
+            //    }
+            //}
+
             e.Handled = true;
         }
         private void exportButton_Click(object sender, RoutedEventArgs e)
@@ -364,6 +402,7 @@ namespace Paint
         }
         private void importButton_Click(object sender, RoutedEventArgs e)
         {
+            canvas.Children.Clear();
             turnOffAllMode();
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == true)
@@ -381,8 +420,8 @@ namespace Paint
 
                 Canvas.SetTop(newImage.image, 5 * numPasteShape);
                 Canvas.SetLeft(newImage.image, 5 * numPasteShape);
-                Canvas.SetBottom(newImage.image, newImage.image.Height/3 + 5 * numPasteShape);
-                Canvas.SetRight(newImage.image, newImage.image.Width/3 + 5 * numPasteShape);
+                Canvas.SetBottom(newImage.image, newImage.image.Height + 5 * numPasteShape);
+                Canvas.SetRight(newImage.image, newImage.image.Width + 5 * numPasteShape);
 
                 newImage.top = Canvas.GetTop(newImage.image);
                 newImage.left = Canvas.GetLeft(newImage.image);
@@ -396,12 +435,13 @@ namespace Paint
             }
 
             int _count = 0;
-            canvas.Children.Clear();
+
             foreach (var item in _drawnShapes)
             {
                 if (item == null && imageImport[_count] != null)
                 {
                     canvas.Children.Add(imageImport[_count].image);
+                    //MessageBox.Show(imageImport[_count].image.Source + "\n" + imageImport[_count].image.Width.ToString() + "\n" + imageImport[_count].image.Height.ToString() + "\n" + imageImport[_count].top.ToString() + "\n" + imageImport[_count].left.ToString() + "\n" + imageImport[_count].bottom.ToString() + "\n" + imageImport[_count].right.ToString());
                     _count++;
                 }
                 else
