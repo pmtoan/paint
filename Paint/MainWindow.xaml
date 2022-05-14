@@ -16,20 +16,59 @@
     </Window.Resources>
     <DockPanel LastChildFill="True">
         <ribbon:Ribbon Name="RibbonBar" DockPanel.Dock="Top" MouseMove="Ribbon_MouseMove">
+
             <Ribbon.QuickAccessToolBar>
-                <RibbonQuickAccessToolBar>
-                    <RibbonSplitButton  x:Name="openButton" Click="openButton_Click" SmallImageSource="./images/folder.png" >
-                        <RibbonSplitMenuItem Header="Open file" Click="openButton_Click" ImageSource="./images/folder.png" Margin="0,10,0,5"/>
-                        <RibbonSplitMenuItem Header="Insert Image" x:Name="importButton" Click="importButton_Click" ImageSource="./images/import.png" Margin="0,5,0,10"/>
-                    </RibbonSplitButton>
-                    <RibbonSplitButton  x:Name="saveButton" Click="saveButton_Click" SmallImageSource="./images/save.png" Margin="10,0,0,0">
-                        <RibbonSplitMenuItem Header="Save file" Click="saveButton_Click" ImageSource="./images/save.png" Margin="0,10,0,5"/>
-                        <RibbonSplitMenuItem Header="Save as image" x:Name="exportButton" Click="exportButton_Click" ImageSource="./images/export.png" Margin="0,5,0,10"/>
-                    </RibbonSplitButton>
+                <RibbonQuickAccessToolBar >
+                    <RibbonButton x:Name="saveButton" Click="saveButton_Click" SmallImageSource="./images/save.png" Margin="10,0,0,0"/>
                     <RibbonButton x:Name="undoButton" Click="undoButton_Click" SmallImageSource="./images/undo.png" Margin="10,0,0,0"/>
                     <RibbonButton x:Name="redoButton" Click="redoButton_Click" SmallImageSource="./images/redo.png" Margin="10,0,0,0"/>
                 </RibbonQuickAccessToolBar>
             </Ribbon.QuickAccessToolBar>
+
+            <Ribbon.ApplicationMenu>
+                <RibbonApplicationMenu Name="ribbonApplicationMenu" Label="File">
+                    <RibbonApplicationMenu.SmallImageSource>
+                        <DrawingImage>
+                            <DrawingImage.Drawing>
+                                <GeometryDrawing>
+                                    <GeometryDrawing.Geometry>
+                                        <RectangleGeometry Rect="0,0,20,20"></RectangleGeometry>
+                                    </GeometryDrawing.Geometry>
+                                    <GeometryDrawing.Brush>
+                                        <VisualBrush Stretch="Uniform">
+                                            <VisualBrush.Visual>
+                                                <TextBlock Text="File" FontSize="16" Foreground="White" />
+                                            </VisualBrush.Visual>
+                                        </VisualBrush>
+                                    </GeometryDrawing.Brush>
+                                </GeometryDrawing>
+                            </DrawingImage.Drawing>
+                        </DrawingImage>
+                    </RibbonApplicationMenu.SmallImageSource>
+                    <RibbonApplicationMenu.Resources>
+                        <Style TargetType="Popup">
+                            <Setter Property="Placement" Value="Left" />
+                        </Style>
+                    </RibbonApplicationMenu.Resources>
+
+                    <RibbonApplicationMenuItem 
+                                       Header="New" Click="newFileButton_Click" ImageSource="./images/file.png" />
+                    <RibbonApplicationMenuItem 
+                                       Header="Open file ..." Click="openButton_Click" ImageSource="./images/folder.png" />
+                    <RibbonApplicationMenuItem 
+                                       Header="Import image ..." Click="importButton_Click" ImageSource="./images/import.png" />
+                    <RibbonApplicationMenuItem
+                                       Header="Save" Click="saveButton_Click" ImageSource="./images/save.png" />
+                    <RibbonApplicationMenuItem 
+                                       Header="Save As Image ..." Click="exportButton_Click" ImageSource="./images/export.png" />
+
+                    
+                    <RibbonSeparator />
+                    <RibbonApplicationMenuItem 
+                                       Header="Close" />
+
+                </RibbonApplicationMenu>
+            </Ribbon.ApplicationMenu>
 
             <ribbon:RibbonTab Header="Home">
                 <ribbon:RibbonGroup Header="Clipboard">
@@ -38,7 +77,7 @@
                     <ribbon:RibbonButton Margin="5" Label=" Copy" SmallImageSource="./images/copy.png" Click="copyButton_Click"/>
                 </ribbon:RibbonGroup>
 
-                <ribbon:RibbonGroup Header="Canvas">
+                <ribbon:RibbonGroup Header="View">
                     <ribbon:RibbonButton Name="zoomInButton" Click="zoomInButton_Click" Margin="5" Label=" Zoom In" SmallImageSource="./images/zoomin.png"/>
                     <ribbon:RibbonButton Name="zoomOutButton" Click="zoomOutButton_Click" Margin="5" Label=" Zoom Out" SmallImageSource="./images/zoomout.png"/>
                 </ribbon:RibbonGroup>
@@ -46,11 +85,11 @@
                 <ribbon:RibbonGroup Header="Tool">
                     <StackPanel Orientation="Horizontal">
                         <ribbon:RibbonRadioButton GroupName="radioButton" Margin="5" SmallImageSource="./images/cursor.png" Click="cursorButton_Click" />
-                        <ribbon:RibbonRadioButton GroupName="radioButton" Margin="5" SmallImageSource="./images/pencil.png"/>
                         <ribbon:RibbonRadioButton GroupName="radioButton" Margin="5" SmallImageSource="./images/fill.png" Click="fillButton_Click"/>
+                        <ribbon:RibbonRadioButton GroupName="radioButton" Margin="5" SmallImageSource="./images/pencil.png"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <ribbon:RibbonRadioButton GroupName="radioButton" Name="eraserButton" Click="eraserButton_Click" Margin="5" SmallImageSource="./images/eraser.png"/>
+                        <ribbon:RibbonRadioButton GroupName="radioButton" Name="eraserButton" Margin="5" SmallImageSource="./images/eraser.png"/>
                     </StackPanel>
                 </ribbon:RibbonGroup>
 
@@ -77,7 +116,7 @@
                     <ribbon:RibbonMenuButton Label="Size" LargeImageSource="./images/line-size.png">
                         <ribbon:RibbonGallery SelectionChanged="SizeGallery_SelectionChanged" >
                             <ribbon:RibbonGalleryCategory x:Name="SizeCategory">
-                                <ribbon:RibbonGalleryItem Height="30" Tag="2">
+                                <ribbon:RibbonGalleryItem Height="30" Tag="3">
                                     <Rectangle
                                         Width="80"
                                         Height="2"
@@ -86,7 +125,7 @@
                                         StrokeDashArray="1,0"
                                         StrokeThickness="2" />
                                 </ribbon:RibbonGalleryItem>
-                                <ribbon:RibbonGalleryItem Height="30" Tag="4">
+                                <ribbon:RibbonGalleryItem Height="30" Tag="5">
                                     <Rectangle
                                         Width="80"
                                         Height="4"
@@ -94,7 +133,7 @@
                                         StrokeDashArray="1,0"
                                         StrokeThickness="4" />
                                 </ribbon:RibbonGalleryItem>
-                                <ribbon:RibbonGalleryItem Height="30" Tag="8">
+                                <ribbon:RibbonGalleryItem Height="30" Tag="7">
                                     <Rectangle
                                         Width="80"
                                         Height="6"
@@ -102,7 +141,7 @@
                                         StrokeDashArray="1,0"
                                         StrokeThickness="8" />
                                 </ribbon:RibbonGalleryItem>
-                                <ribbon:RibbonGalleryItem Height="30" Tag="16">
+                                <ribbon:RibbonGalleryItem Height="30" Tag="10">
                                     <Rectangle
                                         Width="80"
                                         Height="10"
@@ -116,7 +155,7 @@
                 </ribbon:RibbonGroup>
 
                 <ribbon:RibbonGroup x:Name="StrokeType" Header="Type">
-                    <ribbon:RibbonMenuButton Label="Stroke" LargeImageSource="./images/line-size.png">
+                    <ribbon:RibbonMenuButton Label="Stroke" LargeImageSource="./images/stroke.png">
                         <ribbon:RibbonGallery SelectionChanged="StrokeTypeGallery_SelectionChanged" >
                             <ribbon:RibbonGalleryCategory x:Name="StrokeTypeCategory">
                                 <ribbon:RibbonGalleryItem Height="30" Tag="1">
