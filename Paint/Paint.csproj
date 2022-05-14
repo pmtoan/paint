@@ -14,6 +14,7 @@
     <None Remove="images\ellipse.png" />
     <None Remove="images\eraser.png" />
     <None Remove="images\export.png" />
+    <None Remove="images\file.png" />
     <None Remove="images\fill.png" />
     <None Remove="images\folder.png" />
     <None Remove="images\import.png" />
@@ -27,6 +28,7 @@
     <None Remove="images\rectangle.png" />
     <None Remove="images\save.png" />
     <None Remove="images\redo.png" />
+    <None Remove="images\stroke.png" />
     <None Remove="images\text.png" />
     <None Remove="images\undo.png" />
     <None Remove="images\zoomin.png" />
@@ -51,6 +53,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="images\cut.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\file.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="images\folder.png">
@@ -97,6 +102,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="images\redo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\stroke.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="images\text.png">
